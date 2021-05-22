@@ -3,44 +3,64 @@ class Rtable {
     constructor(idTable) {
         this.tHeadData = [];
         this.tBodyData = [];
+        this.ToggleS = true;
         this.Assc = true;
         this.pageSize = 5;
+        this.jojo = [];
+        this.dataAttributsDate = [];
         this.idTable = idTable;
         this.tableToJson();
         document.getElementById(this.idTable).innerHTML = '';
         console.log(this.tHeadData);
         console.log(this.dataTableJson);
-        let innerP = '';
-        for (let z = 0; z < Math.ceil(this.dataTableJsonA.length / this.pageSize); z++) {
-            innerP += `<a id="P__X__${z + 1}" style="cursor:pointer;">${z + 1}</a>\n`;
-        }
-        let k = ` <div class="pagination">
-        <a href="#" style="cursor:pointer;">&laquo;</a>
-        ${innerP}
-        <a href="#" style="cursor:pointer;">&raquo;</a>
-      </div>
-      `;
-        console.log(k);
-        let my_elem = document.getElementById(this.idTable);
-        let span = document.createElement('span');
-        span.innerHTML = k;
-        span.className = 'asterisk';
-        my_elem.parentNode.insertBefore(span, my_elem.nextSibling);
+        let cv = () => {
+            let innerP = '';
+            for (let z = 0; z < Math.ceil(this.dataTableJsonA.length / this.pageSize); z++) {
+                innerP += `<a id="P__X__${z + 1}" style="cursor:pointer;">${z + 1}</a>\n`;
+            }
+            let k = ` <div class="pagination" id="pgN">
+            <a href="#" style="cursor:pointer;">&laquo;</a>
+            ${innerP}
+            <a href="#" style="cursor:pointer;">&raquo;</a>
+            </div>
+            `;
+            let my_elem = document.getElementById(this.idTable);
+            let span = document.createElement('span');
+            span.innerHTML = k;
+            span.className = 'asterisk';
+            my_elem.parentNode.insertBefore(span, my_elem.nextSibling);
+        };
+        cv();
         let my_elem1 = document.getElementById(this.idTable);
         let span1 = document.createElement('span');
         span1.innerHTML = `
-        <select id="my-select">
+        <select id="my-select" class="form-select" style="width:10%">
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
               <option value="25">25</option>
-        </select> entries per page       `;
+        </select> entries per page`;
         span1.className = 'Selc';
         my_elem1.parentNode.insertBefore(span1, my_elem1);
+        let gf = () => {
+            let innerP = '';
+            for (let z = 0; z < Math.ceil(this.dataTableJson.length / this.pageSize); z++) {
+                innerP += `<a id="P__X__${z + 1}" style="cursor:pointer;">${z + 1}</a>\n`;
+            }
+            let k = `
+            <a href="#" style="cursor:pointer;">&laquo;</a>
+            ${innerP}
+            <a href="#" style="cursor:pointer;">&raquo;</a>
+            </div>
+            `;
+            let my_elem = document.getElementById('pgN');
+            my_elem.innerHTML = k;
+        };
         const ChangeV = (params) => {
             this.pageSize = params;
             console.log(this.pageSize);
+            gf();
             this.paginate(1);
         };
         document.getElementById('my-select').addEventListener('change', function () {
@@ -56,26 +76,42 @@ class Rtable {
     }
     tableToJson() {
         var _a, _b, _c;
-        let getHead = (_a = document.getElementById(this.idTable)) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
-        for (let v = 0; v < getHead.length; v++) {
-            (_b = this.tHeadData) === null || _b === void 0 ? void 0 : _b.push(getHead[v].textContent);
-        }
-        let getbody = (_c = document.getElementById(this.idTable)) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
-        console.log(getbody[0].rows.length);
-        for (let row = 0; row < getbody[0].rows.length; row++) {
-            let cellsD = [];
-            for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
-                cellsD.push(getbody[0].rows[row].cells[cellsIndex].textContent);
+        if (this.idTable != null || this.idTable != '') {
+            let getHead = (_a = document.getElementById(this.idTable)) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
+            for (let v = 0; v < getHead.length; v++) {
+                (_b = this.tHeadData) === null || _b === void 0 ? void 0 : _b.push(getHead[v].textContent);
             }
-            this.tBodyData.push(cellsD);
+            let getbody = (_c = document.getElementById(this.idTable)) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
+            console.log(getbody[0].rows.length);
+            for (let row = 0; row < getbody[0].rows.length; row++) {
+                let cellsD = [];
+                for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
+                    cellsD.push(getbody[0].rows[row].cells[cellsIndex].textContent);
+                }
+                this.tBodyData.push(cellsD);
+            }
+            this.dataTableJson = this.tBodyData.reduce((akumulasi, e) => {
+                akumulasi.push(this.tHeadData.reduce((x, y, i) => {
+                    x[y] = e[i];
+                    return x;
+                }, {}));
+                return akumulasi;
+            }, []);
+            for (let v = 0; v < getHead.length; v++) {
+                if (getHead[v].attributes[0] === undefined) {
+                    this.dataAttributsDate.push('null');
+                }
+                else {
+                    if (getHead[v].attributes[0]['value'] === 'date') {
+                        this.dataAttributsDate.push('date');
+                    }
+                    else {
+                    }
+                }
+            }
+            console.log(this.dataAttributsDate);
         }
-        this.dataTableJson = this.tBodyData.reduce((akumulasi, e) => {
-            akumulasi.push(this.tHeadData.reduce((x, y, i) => {
-                x[y] = e[i];
-                return x;
-            }, {}));
-            return akumulasi;
-        }, []);
+        this.dataTableRaw = this.dataTableJson;
         this.dataTableJsonA = this.dataTableJson;
         return this.dataTableJson;
     }
@@ -112,6 +148,31 @@ class Rtable {
                 return naturalCompare(b[column], a[column]);
             });
         }
+        // for (let Ox = 0; Ox < this.dataAttributsDate.length; Ox++) {
+        //     if (this.dataAttributsDate[Ox] === 'date') {
+        //             if (this.tHeadData[Ox] === column) {
+        //                 if (this.ToggleS) {
+        //                     this.ToggleS = !this.ToggleS
+        //                     this.dataTableJson.sort((a:any,b:any)=>{
+        //                         return new Date(a[column]).getDate() - new Date(b[column]).getDate()
+        //                     })
+        //                     this.dataTableJsonA.sort((a:any,b:any)=>{
+        //                         return new Date(a[column]).getDate() - new Date(b[column]).getDate()
+        //                     })
+        //                     console.log(new Date('2014-05-11').getDate());
+        //                 } else {
+        //                     this.ToggleS = !this.ToggleS
+        //                     this.dataTableJson.sort((a:any,b:any)=>{
+        //                         return new Date(b[column]).getDate() - new Date(a[column]).getDate()
+        //                     })
+        //                     this.dataTableJsonA.sort((a:any,b:any)=>{
+        //                         return new Date(b[column]).getDate() - new Date(a[column]).getDate()
+        //                     })
+        //                     console.log('o');
+        //                 }
+        //             }
+        //     }
+        // }
         this.renderToTable(true);
         return this.dataTableJson;
     }
@@ -125,7 +186,7 @@ class Rtable {
         }
         let TGB = this.dataTableJsonA.slice((1 - 1) * this.pageSize, 1 * this.pageSize);
         for (let y = 0; y < this.tHeadData.length; y++) {
-            TableHead += `<th style="cursor: pointer;" id="${this.tHeadData[y]}" class="columns">${this.tHeadData[y]}</th>\n`;
+            TableHead += `<th style="cursor: pointer;" id="${this.tHeadData[y]}" class="columns tablesorter-header">${this.tHeadData[y]}</th>\n`;
         }
         for (let __row = 0; __row < TGB.length; __row++) {
             let ToCell = '';
@@ -147,15 +208,19 @@ class Rtable {
         pener.innerHTML = tabS;
         for (let n = 0; n < this.tHeadData.length; n++) {
             let cv = document.getElementById(this.tHeadData[n]);
+            document.getElementById(this.tHeadData[n]).style.opacity = '100%';
             cv.onclick = () => {
                 this.sort(this.tHeadData[n]);
+                document.getElementById(this.tHeadData[n]).style.opacity = '70%';
             };
         }
         for (let __w = 0; __w < Math.ceil(this.dataTableJson.length / this.pageSize); __w++) {
             let cv = document.getElementById(`P__X__${__w + 1}`);
             cv.onclick = () => {
                 this.paginate(__w + 1);
+                cv.style.background = "#ddd";
             };
+            cv.style.background = "#fff";
         }
         console.log(Math.ceil(this.dataTableJson.length / this.pageSize));
         return tabS;
