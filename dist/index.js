@@ -55,7 +55,7 @@ class RdataTB {
         span1.innerHTML = `
         <table border="0" style="width:100%;margin-bottom:12px;">
         <tr>
-          <td style="width:50%;">
+          <td style="width:100%;">
              <select id="my-select" class="form-select" style="float:left;width:99px!important;margin-right:10px;">
              <option value="5">5</option>
              <option value="10">10</option>
@@ -63,10 +63,7 @@ class RdataTB {
              <option value="20">20</option>
              <option value="25">25</option>
              </select>
-             <input class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:300px;margin-left:10px">
-          </td>
-          <td style="width:50%">
-          
+             <input class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:30%;margin-left:10px">
           </td>
         </tr>
       </table>
