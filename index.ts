@@ -276,7 +276,7 @@ class RdataTB  {
     }
 
     public sort(column:string):object{
-        function naturalCompagitre(a:any, b:any) {
+        function naturalCompare(a:any, b:any) {
             let ax:Array<any> = []
             let bx:Array<any> = []
         

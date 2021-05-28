@@ -251,7 +251,7 @@ class RdataTB {
     paginate() {
     }
     sort(column) {
-        function naturalCompagitre(a, b) {
+        function naturalCompare(a, b) {
             let ax = [];
             let bx = [];
             a.replace(/(\d+)|(\D+)/g, function (_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]); });
