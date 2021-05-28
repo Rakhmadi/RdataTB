@@ -1,188 +1,285 @@
-class RdataTB{
-    idTable:string;
-    tHeadData: Array<any> = []
-    tBodyData: Array<any> = []
-    private dataTableJson:any;
-    private dataTableJsonA:any;
-    dataTableRaw:any;
-    ToggleS:boolean =true;
-    Assc:boolean = true;
-    pageSize:number = 5;
-    jojo:Array<boolean>= []
-    dataAttributsDate:Array<string> = [];
-    u: any = [];
-    constructor(idTable:string){
-        this.idTable = idTable;
-        this.tableToJson()
-        document.getElementById(this.idTable)!.innerHTML = ''
-        console.log(this.tHeadData);
-        console.log(this.dataTableJson);
-        let cv = ()=> {
-            let innerP:string = ''
-            for (let z = 0; z < Math.ceil(this.dataTableJsonA.length/this.pageSize); z++) {
-                this.u.push(z+1)
-                innerP += `<a id="P__X__${z+1}" style="cursor:pointer;">${z+1}</a>\n`
-            }
-            let n:any = []
-            const preV = (params:number) => {
-                let ch = Math.ceil(this.dataTableJson.length/this.pageSize)
-                n = this.u.slice(params - 1,(5+params >= ch)? ch : 5 + params);
-            }
+class RdataTB  {
 
-            const nexT = () => {
-                // x.u.slice(35).slice(0,5);
-                // par-ch > ch = par | ret -> u.reverse.slice(5);
-                // let ch = Math.ceil(this.dataTableJson.length/this.pageSize)
-                // n = this.u.slice(30).slice(0,5);
-
-                console.log(this.u);
-                
-            }
-            nexT()
-
-            
-            let k = ` <div class="pagination" id="pgN">
-            <a href="#" id="x__PREV__X" style="cursor:pointer;">&laquo;</a>
-            ${innerP}
-            <a href="#" id="x__NEXT__X" style="cursor:pointer;">&raquo;</a>
-            </div>
-            `;
-            let my_elem = document.getElementById(this.idTable);
-            
-            let span = document.createElement('span');
-            span.innerHTML = k;
-            span.className = 'asterisk'
-            my_elem!.parentNode!.insertBefore(span, my_elem!.nextSibling); 
-            document.getElementById('x__PREV__X')!.onclick = ()=>{
-                preV(36)
-                console.log(n);
-            }
-            document.getElementById('x__NEXT__X')!.onclick = ()=>{
-                nexT()
-                console.log(n);
-            }
-                       
+    TableElement!: HTMLElement | null;
+    HeaderDataTable:Array<any> = []
+    RowDataTable:Array<any> = []
+    DataTable:any
+    DataSorted:any
+    DataToRender:any
+    PageSize:number = 5
+    NumSelectedPage:number = 0
+    Assc: boolean = true
+    DataSearch: any;
+    LOC:number = 0
+    i: number = 0;
+    COntrolDataArr: any;
+    DataTableRaw: any;
+    constructor(IdTable:string) {
+        this.TableElement = document.getElementById(IdTable)
+        this.StyleS();
+        this.ConvertToJson()
+        this.paginateRender()
+        this.Control()
+        this.search()
+        this.RenderToHTML()
+        this.PaginateUpdate()
+    }
+    StyleS() {
+        var style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = `/* Pagination links */
+        .pagination a {
+          color: black;
+          float: left;
+          padding: 8px 12px;
+          text-decoration: none;
+          transition: background-color .3s;
+          font-size:12px;
         }
-        cv()
-        let my_elem1 = document.getElementById(this.idTable);
         
+        /* Style the active/current link */
+        .pagination a.active {
+          background-color: dodgerblue;
+          color: white;
+        }
+        .tablesorter-header-asc::after {
+            content: '\\2191';
+            top: calc(50% - 0.75em);
+            float: right;
+        }
+        
+        .tablesorter-header-desc::after {
+            content: '\\2193';
+            top: calc(50% - 0.75em);
+            float: right;
+        }
+        /* Add a grey background color on mouse-over */
+        .pagination a:hover:not(.active) {background-color: #ddd;}`;
+        document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    public Control(){
         let span1 = document.createElement('span');
         span1.innerHTML = `
-
-        <label class="form-label"> entries per page</label><select id="my-select" class="form-select" style="width:10%">
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="15">15</option>
-        <option value="20">20</option>
-        <option value="25">25</option>
-        </select>
-        <input class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:20%; float:right">
+        <table border="0" style="width:100%;margin-bottom:12px;">
+        <tr>
+          <td style="width:50%;">
+             <select id="my-select" class="form-select" style="float:left;width:99px!important">
+             <option value="5">5</option>
+             <option value="10">10</option>
+             <option value="15">15</option>
+             <option value="20">20</option>
+             <option value="25">25</option>
+             </select>
+          </td>
+          <td style="width:50%">
+          <input class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:40%; float:right ;">
+          </td>
+        </tr>
+      </table>
         `;
         span1.className = 'Selc';
-       
-        my_elem1!.parentNode!.insertBefore(span1, my_elem1);
-        let gf = ()=>{
-            let innerP:string = ''
-            
-            for (let z = 0; z < Math.ceil(this.dataTableJson.length/this.pageSize); z++) {
-                this.u.push(z+1)  
-                innerP += `<a id="P__X__${z+1}" style="cursor:pointer;">${z+1}</a>\n`
-            }
+        this.TableElement!.parentNode!.insertBefore(span1, this.TableElement);
+        this.TableElement!.style.width = '100%'
 
-            let k = `
-            <a href="#" id="x__PREV__X" style="cursor:pointer;">&laquo;</a>
-            ${innerP}
-            <a href="#" id="x__NEXT__X" style="cursor:pointer;">&raquo;</a>
-            </div>
-            `;
-            let my_elem = document.getElementById('pgN');
-            my_elem!.innerHTML = k
-        }
         const ChangeV = (params:number) => {
-            this.pageSize = params
-            console.log(this.pageSize);
-            gf()
-            this.paginate(1);
+            this.PageSize = params
+            this.i = 0            
+            this.RenderToHTML()
+            
         }
         document.getElementById('my-select')!.addEventListener('change', function(){
             ChangeV(this.value)
-            
-        });  
-        console.log(this.dataTableJsonA);
+        })
+        document.getElementById('x__NEXT__X')!.onclick = ()=>{
+            this.nextItem()
+        }
+        document.getElementById('x__PREV__X')!.onclick = ()=>{
+            this.prevItem()
+        }
+        
+    }
+
+    nextItem():void {
+        this.i = this.i + 1; // increase i by one
+        this.i = this.i % this.Divide(this.DataTable).length; // if we've gone too high, start from `0` again
+         this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
+        return this.RenderToHTML(this.COntrolDataArr)
+    }
+     prevItem():void {
+        if (this.i === 0) { // i would become 0
+            this.i = this.Divide(this.DataTable).length; // so put it at the other end of the array
+        }
+        this.i = this.i - 1; // decrease by one
+         this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
+        return this.RenderToHTML(this.COntrolDataArr)
+    }
+
+    
+
+    public paginateRender(){
+        let innerP:any = ''
+        for (let z = 0; z < Math.floor(this.DataTable.length/this.PageSize); z++) {
+            innerP += `<a id="P__X__${z+1}" style="cursor:pointer;">${z+1}</a>\n`
+        }
+
+        let k = ` <div class="pagination" id="pgN">
+        <a id="x__PREV__X" style="cursor:pointer;user-select: none;">&laquo;</a>
+           <div id="PF">
+                ${innerP}
+           </div>
+        <a id="x__NEXT__X" style="cursor:pointer;user-select: none;">&raquo;</a>
+        </div>
+        `;
+        let span = document.createElement('span');
+        span.innerHTML = k;
+        span.className = 'asterisk'
+        this.TableElement!.parentNode!.insertBefore(span, this.TableElement!.nextSibling)
+    }
+    public PaginateUpdate(){
+        document.getElementById('PF')!.innerHTML = `
+            <a style="cursor:pointer;">Page</a>
+            <a style="cursor:pointer;">${this.i + 1}</a>
+            <a style="cursor:pointer;">of</a>
+            <a style="cursor:pointer;">${this.Divide(this.DataTable).length}</a>
+            <a style="cursor:pointer;">Entries</a>
+        `
+    }
+
+    public search(){
+        let dataTOsrc = this.DataTable
         document.getElementById('SEARCH____X')?.addEventListener('input',(evt)=>{
-            let f = this.dataTableRaw.filter( (element:any) =>{ 
-                for (let index = 0; index < this.tHeadData.length; index++) {
-                     let fg = element[this.tHeadData[index]].toLowerCase().includes(evt!.target!.value!)
+            this.DataTable = dataTOsrc.filter( (element:any) =>{ 
+                for (let index = 0; index < this.HeaderDataTable.length; index++) {
+                     let fg = element[this.HeaderDataTable[index]].toLowerCase().includes(evt!.target!.value!)
                      if (fg) {
                          return fg
                      }
                 }
-                
             })
-           
-            this.dataTableJson = f 
-            this.dataTableJsonA = f 
-            console.log(this.pageSize);
-             gf()
-            this.renderToTable()         
+            this.RenderToHTML()
+            this.i = 0
+            this.PaginateUpdate()
+
+            
         })
-        
-        this.renderToTable()
-        
     }
-    public paginate(page_number:number){
-        this.dataTableJsonA =  this.dataTableJson.slice((page_number - 1) * this.pageSize, page_number * this.pageSize);
-        this.renderToTable();
-        return this.dataTableJsonA
+
+    public ConvertToJson():object{
+        //get Header
+        let getHead:any = this.TableElement?.getElementsByTagName('th');
+        for (let v = 0; v < getHead.length; v++) {
+            this.HeaderDataTable?.push(getHead[v].textContent)
+        }
+        //get row data
+        let getbody:any = this.TableElement?.getElementsByTagName('tbody');
+        for (let row = 0; row < getbody[0].rows.length; row++) {
+            let cellsD = []
+            for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
+                cellsD.push(getbody[0].rows[row].cells[cellsIndex].innerHTML)
+            }
+            this.RowDataTable.push(cellsD)
+        }
+        // to key value Json
+        this.DataTable = this.RowDataTable.reduce((akumulasi:any,e:any)=>{
+            akumulasi.push(this.HeaderDataTable.reduce((x,y,i)=>{
+                x[y] = e[i];
+                return x;
+            },{}))
+            return akumulasi;
+        },[]) 
+        this.DataTableRaw = this.DataTable
+        return this.DataTable
     }
-    public tableToJson():object{
-        if (this.idTable != null || this.idTable != '') {
-          let getHead:any = document.getElementById(this.idTable)?.getElementsByTagName('th');
-          for (let v = 0; v < getHead.length; v++) {
-              this.tHeadData?.push(getHead[v].textContent)
-          }
-          let getbody:any = document.getElementById(this.idTable)?.getElementsByTagName('tbody');
-          console.log(getbody[0].rows.length);
-          
-          for (let row = 0; row < getbody[0].rows.length; row++) {
-              let cellsD = []
-              for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
-                  cellsD.push(getbody[0].rows[row].cells[cellsIndex].innerHTML)
-              }
-              this.tBodyData.push(cellsD)
-          }
-          this.dataTableJson = this.tBodyData.reduce((akumulasi:any,e:any)=>{
-              akumulasi.push(this.tHeadData.reduce((x,y,i)=>{
-                  x[y] = e[i];
-                  return x;
-              },{}))
-              return akumulasi;
-          },[])      
-          
-          for (let v = 0; v < getHead.length; v++) {
-           
-            if (getHead[v].attributes[0] === undefined) {
-                this.dataAttributsDate.push('null')
-            }else{
-               if (getHead[v].attributes[0]['value'] === 'date') {
-                this.dataAttributsDate.push('date')
-               } else {
-                   
-               }
+
+    public Divide(data:any){
+        let gh = []
+        let h = (typeof this.PageSize === "string")?parseInt(this.PageSize):this.PageSize;
+        for (var i = 0; i < this.DataTable.length; i += h){
+            gh.push(this.DataTable.slice(i,i + h))        
+        }
+        return gh
+    }
+
+    public RenderToHTML(SlecTloaf:any = null){
+
+        //clear 
+        this.TableElement!.innerHTML = ''
+        // check if is sorted
+        let CheckIFSorted = (this.DataSorted === null || this.DataSorted === [] || this.DataSorted ===  undefined )? 
+        this.Divide(this.DataTable)[this.NumSelectedPage] 
+        : this.Divide(this.DataSorted)[this.NumSelectedPage];
+        this.DataToRender = CheckIFSorted
+        // HeaderDataTable To Element
+        let header:string = ''
+        for (let I = 0; I < this.HeaderDataTable.length; I++) {
+            header +=`<th style="cursor: pointer;" id="${this.HeaderDataTable[I]}" class="columns tablesorter-header">${this.HeaderDataTable[I]}</th>\n`                       
+        }
+        // RowDataTable To Element
+        let ifUndefinded = (this.DataToRender === undefined) ? 0 : this.DataToRender.length
+        let row:string = ''
+        if (SlecTloaf === null) {
+            for (let ___row = 0; ___row < ifUndefinded ; ___row++) {
+                let ToCell:string = ''
+                for (let ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
+                    ToCell += `<td>${this.DataToRender[___row][this.HeaderDataTable[___cell]]}</td>\n`
+                }
+                row +=`<tr>${ToCell}</tr>\n` 
+            }
+        }else{
+            for (let ___row = 0; ___row < SlecTloaf.length ; ___row++) {
+                let ToCell:string = ''
+                for (let ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
+                    ToCell += `<td>${SlecTloaf[___row][this.HeaderDataTable[___cell]]}</td>\n`
+                }
+                row +=`<tr>${ToCell}</tr>\n` 
             }
         }
-        console.log(this.dataAttributsDate);
-             
-          }
-        this.dataTableRaw = this.dataTableJson
-        this.dataTableJsonA = this.dataTableJson
-        return this.dataTableJson
+
+        // ====
+        let ToEl=`
+        <thead>
+            <tr>
+                ${header}
+            </tr>
+        </thead>
+        <tbody>
+            ${row}
+        </tbody>
+        <tfoot>
+        ${header}
+        </tfoot>
+        `
+        this.TableElement!.innerHTML = ToEl
+
+        for (let n = 0; n < this.HeaderDataTable.length; n++) {
+            let cv:HTMLElement = document.getElementById(this.HeaderDataTable[n])!;
+            document.getElementById(this.HeaderDataTable[n])!.style.opacity = '100%'        
+            cv.onclick = ()=>{
+                this.sort(this.HeaderDataTable[n]);
+                document.getElementById(this.HeaderDataTable[n])!.style.opacity = '60%'
+                if (this.Assc) {
+                    document.getElementById(this.HeaderDataTable[n])!.classList.remove('tablesorter-header-desc')
+                    document.getElementById(this.HeaderDataTable[n])!.classList.add('tablesorter-header-asc')
+                } else {
+                    document.getElementById(this.HeaderDataTable[n])!.classList.remove('tablesorter-header-asc')
+                    document.getElementById(this.HeaderDataTable[n])!.classList.add('tablesorter-header-desc')
+                }
+            }
+        }
+        this.PaginateUpdate()
     }
-    public sort(column:any){
-        function naturalCompare(a:any, b:any) {
+    
+
+    public paginate(){
+
+    }
+
+    public sort(column:string):object{
+        function naturalCompagitre(a:any, b:any) {
             let ax:Array<any> = []
             let bx:Array<any> = []
-         
+        
             a.replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { ax.push([$1 || Infinity, $2 || ""]) });
             b.replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { bx.push([$1 || Infinity, $2 || ""]) });
          
@@ -195,129 +292,44 @@ class RdataTB{
          
             return ax.length - bx.length;
          }
+        let data = this.DataTable
         if (this.Assc) {
             this.Assc = !this.Assc
-            this.dataTableJson.sort((a:any,b:any)=>{
+            data.sort((a:any,b:any)=>{
                 return naturalCompare(a[column], b[column])
             })
-            this.dataTableJsonA.sort((a:any,b:any)=>{
-                return naturalCompare(a[column], b[column])
-            })
+            
         } else {
             this.Assc = !this.Assc
-            this.dataTableJson.sort((a:any,b:any)=>{
-                return naturalCompare(a[column], b[column])
-            })
-            this.dataTableJsonA.sort((a:any,b:any)=>{
+            data.sort((a:any,b:any)=>{
                 return naturalCompare(b[column], a[column])
             })
         }
-        // for (let Ox = 0; Ox < this.dataAttributsDate.length; Ox++) {
-        //     if (this.dataAttributsDate[Ox] === 'date') {
-        //             if (this.tHeadData[Ox] === column) {
-                        
-        //                 if (this.ToggleS) {
-        //                     this.ToggleS = !this.ToggleS
-        //                     this.dataTableJson.sort((a:any,b:any)=>{
-        //                         return new Date(a[column]).getDate() - new Date(b[column]).getDate()
-        //                     })
-        //                     this.dataTableJsonA.sort((a:any,b:any)=>{
-        //                         return new Date(a[column]).getDate() - new Date(b[column]).getDate()
-        //                     })
-        //                     console.log(new Date('2014-05-11').getDate());
-                            
-                            
-        //                 } else {
-        //                     this.ToggleS = !this.ToggleS
-        //                     this.dataTableJson.sort((a:any,b:any)=>{
-        //                         return new Date(b[column]).getDate() - new Date(a[column]).getDate()
-        //                     })
-        //                     this.dataTableJsonA.sort((a:any,b:any)=>{
-        //                         return new Date(b[column]).getDate() - new Date(a[column]).getDate()
-        //                     })
-        //                     console.log('o');
-        //                 }
-        //             }
-        //     }
-        // }
-
-        this.renderToTable(true);
-        return this.dataTableJson
+        this.DataSorted = data
+        this.i = 0
+        this.RenderToHTML()
+        return this.DataSorted
     }
-    public renderToTable(cls:boolean = false){
+    DownloadCSV(filename:string = 'Export'){
+        let res:string = this.HeaderDataTable.join()+'\n'
+        let csv:string ='';
         
-        let pener:HTMLElement  = document.getElementById(this.idTable)!
-        pener.innerHTML = ''
-        let TableHead:string = ''
-        let ToRow:string = ''
-        if (cls) {
-            ToRow = ''
-        }
-        let TGB = this.dataTableJsonA.slice((1 - 1) * this.pageSize, 1 * this.pageSize);
-        for (let y = 0; y < this.tHeadData.length; y++) {
-            TableHead += `<th style="cursor: pointer;" id="${this.tHeadData[y]}" class="columns tablesorter-header">${this.tHeadData[y]}</th>\n`
-        }
-        for (let __row = 0; __row < TGB.length; __row++) {
-            let ToCell:string = ''
-            for (let __cell = 0; __cell < this.tHeadData.length; __cell++) {
-                ToCell += `<td>${TGB[__row][this.tHeadData[__cell]]}</td>\n`
-            }
-            ToRow +=`<tr>${ToCell}</tr>\n` 
+        csv += res;
+        for (let g = 0; g < this.RowDataTable.length; g++) {
+            csv += this.RowDataTable[g].join()+'\r\n';
         }
         
-        let tabS =  `
-        <thead>
-            <tr>
-                ${TableHead}
-            </tr>
-        </thead>
-        <tbody>
-            ${ToRow}
-        </tbody>
-        `
-        pener.innerHTML = tabS
-        for (let n = 0; n < this.tHeadData.length; n++) {
-            
-   
-            let cv:HTMLElement = document.getElementById(this.tHeadData[n])!;
-            document.getElementById(this.tHeadData[n])!.style.opacity = '100%'        
-            cv.onclick = ()=>{
-                this.sort(this.tHeadData[n]);
-                document.getElementById(this.tHeadData[n])!.style.opacity = '70%'
-                if (this.Assc) {
-                    document.getElementById(this.tHeadData[n])!.classList.remove('tablesorter-header-desc')
-                    document.getElementById(this.tHeadData[n])!.classList.add('tablesorter-header-asc')
-                } else {
-                    document.getElementById(this.tHeadData[n])!.classList.remove('tablesorter-header-asc')
-                    document.getElementById(this.tHeadData[n])!.classList.add('tablesorter-header-desc')
-                }
-            }
-        }
-        for (let __w = 0; __w < Math.ceil(this.dataTableJson.length/this.pageSize); __w++) {
-            let cv:HTMLElement = document.getElementById(`P__X__${__w+1}`)!;
-            cv.onclick = ()=>{
-                this.paginate(__w+1)
-                cv.style.background = "#ddd";
-            }
-            cv.style.background = "#fff";
-        }
-        console.log(Math.ceil(this.dataTableJson.length/this.pageSize));
-        return tabS
+        let element = document.createElement('a')!;
+        element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+        element.target = '_blank';
+        element.download = filename + '.csv';
+        element.click();
     }
-    public downloadToCSV(){
-            let res:string = this.tHeadData.join()+'\n'
-            let csv:string ='';
-            
-            csv += res;
-            for (let g = 0; g < this.tBodyData.length; g++) {
-                csv += this.tBodyData[g].join()+'\r\n';
-            }
-            
-            let element = document.createElement('a')!;
-            element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-            element.target = '_blank';
-            element.download = 'export.csv';
-            element.click();
+    DownloadJSON(filename:string = 'Export'){
+        let element = document.createElement('a')!;
+        element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTableRaw));
+        element.target = '_blank';
+        element.download = filename + '.json';
+        element.click();
     }
-
 }

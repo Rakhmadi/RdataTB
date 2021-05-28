@@ -6,134 +6,269 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var Rtable =
+var RdataTB =
 /*#__PURE__*/
 function () {
-  function Rtable(idTable) {
-    var _this = this;
+  function RdataTB(IdTable) {
+    _classCallCheck(this, RdataTB);
 
-    _classCallCheck(this, Rtable);
-
-    this.tHeadData = [];
-    this.tBodyData = [];
-    this.ToggleS = true;
+    this.HeaderDataTable = [];
+    this.RowDataTable = [];
+    this.PageSize = 5;
+    this.NumSelectedPage = 0;
     this.Assc = true;
-    this.pageSize = 5;
-    this.dataAttributsDate = [];
-    this.idTable = idTable;
-    this.tableToJson();
-    document.getElementById(this.idTable).innerHTML = '';
-    console.log(this.tHeadData);
-    console.log(this.dataTableJson);
+    this.DataPaginate = [];
+    this.SicePage = [];
+    this.TableElement = document.getElementById(IdTable);
+    this.ConvertToJson();
+    this.paginateRender();
+    this.Control();
+    this.search();
+    this.paginateControl();
+    this.RenderToHTML();
+  }
 
-    var cv = function cv() {
-      var innerP = '';
+  _createClass(RdataTB, [{
+    key: "paginateControl",
+    value: function paginateControl() {
+      var _this = this;
 
-      for (var z = 0; z < Math.ceil(_this.dataTableJsonA.length / _this.pageSize); z++) {
-        innerP += "<a id=\"P__X__".concat(z + 1, "\" style=\"cursor:pointer;user-select:none;\">").concat(z + 1, "</a>\n");
+      for (var i = 0; i < this.DataPaginate.length; i += 5) {
+        this.SicePage.push(this.DataPaginate.slice(i, i + 5));
       }
 
-      var k = " <div class=\"pagination\" id=\"pgN\">\n            <a href=\"#\" style=\"cursor:pointer;\">&laquo;</a>\n            ".concat(innerP, "\n            <a href=\"#\" style=\"cursor:pointer;\">&raquo;</a>\n            </div>\n            ");
-      var my_elem = document.getElementById(_this.idTable);
-      var span = document.createElement('span');
-      span.innerHTML = k;
-      span.className = 'asterisk';
-      my_elem.parentNode.insertBefore(span, my_elem.nextSibling);
-    };
+      var loc = 0;
 
-    cv();
-    var my_elem1 = document.getElementById(this.idTable);
-    var span1 = document.createElement('span');
-    span1.innerHTML = "\n        <select id=\"my-select\" class=\"form-select\" style=\"width:10%\">\n              <option value=\"5\">5</option>\n              <option value=\"10\">10</option>\n              <option value=\"15\">15</option>\n              <option value=\"20\">20</option>\n              <option value=\"25\">25</option>\n        </select> entries per page";
-    span1.className = 'Selc';
-    my_elem1.parentNode.insertBefore(span1, my_elem1);
+      function next() {}
 
-    var gf = function gf() {
+      var CL = function CL() {
+        _this.paginateReplace();
+      };
+
+      document.getElementById('x__NEXT__X').onclick = function () {
+        if (loc != _this.SicePage.length - 1) {
+          _this.NumSelectedPage = ++loc;
+        }
+
+        _this.paginateReplace();
+      };
+
+      document.getElementById('x__PREV__X').onclick = function () {
+        if (loc != 0) {
+          _this.NumSelectedPage = --loc;
+          console.log(_this.NumSelectedPage);
+
+          _this.paginateReplace();
+        }
+      };
+    }
+  }, {
+    key: "Control",
+    value: function Control() {
+      var _this2 = this;
+
+      var span1 = document.createElement('span');
+      span1.innerHTML = "\n        <table border=\"0\" style=\"width:100%\">\n        <tr>\n          <td style=\"width:50%\">\n             <select id=\"my-select\" class=\"form-select\" style=\"float:left;width:99px!important\">\n             <option value=\"5\">5</option>\n             <option value=\"10\">10</option>\n             <option value=\"15\">15</option>\n             <option value=\"20\">20</option>\n             <option value=\"25\">25</option>\n             </select>\n          </td>\n          <td style=\"width:50%\">\n          <input class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" id=\"SEARCH____X\" style=\"width:30%; float:right ;\">\n          </td>\n        </tr>\n      </table>\n        ";
+      span1.className = 'Selc';
+      this.TableElement.parentNode.insertBefore(span1, this.TableElement);
+      this.TableElement.style.width = '100%';
+
+      var ChangeV = function ChangeV(params) {
+        _this2.PageSize = params;
+        console.log(_this2.PageSize);
+
+        _this2.paginateReplace();
+
+        _this2.RenderToHTML();
+      };
+
+      document.getElementById('my-select').addEventListener('change', function () {
+        ChangeV(this.value);
+      });
+    }
+  }, {
+    key: "paginateReplace",
+    value: function paginateReplace() {
+      this.paginateCountListed();
       var innerP = '';
 
-      for (var z = 0; z < Math.ceil(_this.dataTableJson.length / _this.pageSize); z++) {
+      for (var z = 0; z < this.SicePage[this.NumSelectedPage].length; z++) {
+        innerP += "<a id=\"P__X__".concat(this.SicePage[this.NumSelectedPage][z], "\" style=\"cursor:pointer;\">").concat(this.SicePage[this.NumSelectedPage][z], "</a>\n");
+      }
+
+      var k = "\n            <a href=\"#\" id=\"x__PREV__X\" style=\"cursor:pointer;\">&laquo;</a>\n            ".concat(innerP, "\n            <a href=\"#\" id=\"x__NEXT__X\" style=\"cursor:pointer;\">&raquo;</a>\n            </div>\n            ");
+      var my_elem = document.getElementById('pgN');
+      my_elem.innerHTML = k;
+    }
+  }, {
+    key: "paginateCountListed",
+    value: function paginateCountListed() {
+      this.DataPaginate = [];
+
+      for (var z = 0; z < Math.floor(this.DataTable.length / this.PageSize); z++) {
+        this.DataPaginate.push(z + 1);
+      }
+    }
+  }, {
+    key: "paginateRender",
+    value: function paginateRender() {
+      this.paginateCountListed();
+      var gh = [];
+
+      for (var i = 0; i < this.DataPaginate.length; i += 5) {
+        gh.push(this.DataPaginate.slice(i, i + 5));
+      }
+
+      console.log(gh);
+      var innerP = '';
+
+      for (var z = 0; z < Math.floor(this.DataTable.length / this.PageSize); z++) {
         innerP += "<a id=\"P__X__".concat(z + 1, "\" style=\"cursor:pointer;\">").concat(z + 1, "</a>\n");
       }
 
-      var k = "\n            <a href=\"#\" style=\"cursor:pointer;\">&laquo;</a>\n            ".concat(innerP, "\n            <a href=\"#\" style=\"cursor:pointer;\">&raquo;</a>\n            </div>\n            ");
-      var my_elem = document.getElementById('pgN');
-      my_elem.innerHTML = k;
-    };
-
-    var ChangeV = function ChangeV(params) {
-      _this.pageSize = params;
-      console.log(_this.pageSize);
-      gf();
-
-      _this.paginate(1);
-    };
-
-    document.getElementById('my-select').addEventListener('change', function () {
-      ChangeV(this.value);
-    });
-    console.log(this.dataTableJsonA);
-    this.renderToTable();
-  }
-
-  _createClass(Rtable, [{
-    key: "paginate",
-    value: function paginate(page_number) {
-      this.dataTableJsonA = this.dataTableJson.slice((page_number - 1) * this.pageSize, page_number * this.pageSize);
-      this.renderToTable();
-      return this.dataTableJsonA;
+      console.log(innerP);
+      var k = " <div class=\"pagination\" id=\"pgN\">\n        <a href=\"#\" id=\"x__PREV__X\" style=\"cursor:pointer;\">&laquo;</a>\n        ".concat(innerP, "\n        <a href=\"#\" id=\"x__NEXT__X\" style=\"cursor:pointer;\">&raquo;</a>\n        </div>\n        ");
+      var span = document.createElement('span');
+      span.innerHTML = k;
+      span.className = 'asterisk';
+      this.TableElement.parentNode.insertBefore(span, this.TableElement.nextSibling);
     }
   }, {
-    key: "tableToJson",
-    value: function tableToJson() {
-      var _this2 = this;
+    key: "search",
+    value: function search() {
+      var _this3 = this;
 
-      var _a, _b, _c;
+      var _a;
 
-      if (this.idTable != null || this.idTable != '') {
-        var getHead = (_a = document.getElementById(this.idTable)) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
+      var dataTOsrc = this.DataTable;
+      (_a = document.getElementById('SEARCH____X')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', function (evt) {
+        _this3.DataTable = dataTOsrc.filter(function (element) {
+          for (var index = 0; index < _this3.HeaderDataTable.length; index++) {
+            var fg = element[_this3.HeaderDataTable[index]].toLowerCase().includes(evt.target.value);
 
-        for (var v = 0; v < getHead.length; v++) {
-          (_b = this.tHeadData) === null || _b === void 0 ? void 0 : _b.push(getHead[v].textContent);
-        }
-
-        var getbody = (_c = document.getElementById(this.idTable)) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
-        console.log(getbody[0].rows.length);
-
-        for (var row = 0; row < getbody[0].rows.length; row++) {
-          var cellsD = [];
-
-          for (var cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
-            cellsD.push(getbody[0].rows[row].cells[cellsIndex].textContent);
+            if (fg) {
+              return fg;
+            }
           }
+        });
+        console.log(_this3.DataSearch);
 
-          this.tBodyData.push(cellsD);
+        _this3.paginateReplace();
+
+        _this3.RenderToHTML();
+      });
+    }
+  }, {
+    key: "ConvertToJson",
+    value: function ConvertToJson() {
+      var _this4 = this;
+
+      var _a, _b, _c; //get Header
+
+
+      var getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
+
+      for (var v = 0; v < getHead.length; v++) {
+        (_b = this.HeaderDataTable) === null || _b === void 0 ? void 0 : _b.push(getHead[v].textContent);
+      } //get row data
+
+
+      var getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
+
+      for (var row = 0; row < getbody[0].rows.length; row++) {
+        var cellsD = [];
+
+        for (var cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
+          cellsD.push(getbody[0].rows[row].cells[cellsIndex].innerHTML);
         }
 
-        this.dataTableJson = this.tBodyData.reduce(function (akumulasi, e) {
-          akumulasi.push(_this2.tHeadData.reduce(function (x, y, i) {
-            x[y] = e[i];
-            return x;
-          }, {}));
-          return akumulasi;
-        }, []);
+        this.RowDataTable.push(cellsD);
+      } // to key value Json
 
-        for (var _v = 0; _v < getHead.length; _v++) {
-          if (getHead[_v].attributes[0] === undefined) {
-            this.dataAttributsDate.push('null');
-          } else {
-            if (getHead[_v].attributes[0]['value'] === 'date') {
-              this.dataAttributsDate.push('date');
-            } else {}
-          }
-        }
 
-        console.log(this.dataAttributsDate);
+      this.DataTable = this.RowDataTable.reduce(function (akumulasi, e) {
+        akumulasi.push(_this4.HeaderDataTable.reduce(function (x, y, i) {
+          x[y] = e[i];
+          return x;
+        }, {}));
+        return akumulasi;
+      }, []);
+      return this.DataTable;
+    }
+  }, {
+    key: "Divide",
+    value: function Divide(data) {
+      var gh = [];
+
+      for (var i = 0; i < data.length; i += this.PageSize) {
+        gh.push(data.slice(i, i + this.PageSize));
       }
 
-      this.dataTableRaw = this.dataTableJson;
-      this.dataTableJsonA = this.dataTableJson;
-      return this.dataTableJson;
+      return gh;
     }
+  }, {
+    key: "RenderToHTML",
+    value: function RenderToHTML() {
+      var _this5 = this;
+
+      console.log(this.Divide(this.DataTable));
+      console.log(Math.floor(this.DataTable.length / 7)); //clear 
+
+      this.TableElement.innerHTML = ''; // check if is sorted
+
+      var CheckIFSorted = this.DataSorted === null || this.DataSorted === [] || this.DataSorted === undefined ? this.Divide(this.DataTable)[this.NumSelectedPage] : this.Divide(this.DataSorted)[this.NumSelectedPage];
+      this.DataToRender = CheckIFSorted; // HeaderDataTable To Element
+
+      var header = '';
+
+      for (var I = 0; I < this.HeaderDataTable.length; I++) {
+        header += "<th style=\"cursor: pointer;\" id=\"".concat(this.HeaderDataTable[I], "\" class=\"columns tablesorter-header\">").concat(this.HeaderDataTable[I], "</th>\n");
+      } // RowDataTable To Element
+
+
+      var ifUndefinded = this.DataToRender === undefined ? 0 : this.DataToRender.length;
+      var row = '';
+
+      for (var ___row = 0; ___row < ifUndefinded; ___row++) {
+        var ToCell = '';
+
+        for (var ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
+          ToCell += "<td>".concat(this.DataToRender[___row][this.HeaderDataTable[___cell]], "</td>\n");
+        }
+
+        row += "<tr>".concat(ToCell, "</tr>\n");
+      } // ====
+
+
+      var ToEl = "\n        <thead>\n            <tr>\n                ".concat(header, "\n            </tr>\n        </thead>\n        <tbody>\n            ").concat(row, "\n        </tbody>\n        <tfoot>\n        ").concat(header, "\n        </tfoot>\n        ");
+      this.TableElement.innerHTML = ToEl;
+
+      var _loop = function _loop(n) {
+        var cv = document.getElementById(_this5.HeaderDataTable[n]);
+        document.getElementById(_this5.HeaderDataTable[n]).style.opacity = '100%';
+
+        cv.onclick = function () {
+          _this5.sort(_this5.HeaderDataTable[n]);
+
+          document.getElementById(_this5.HeaderDataTable[n]).style.opacity = '60%';
+
+          if (_this5.Assc) {
+            document.getElementById(_this5.HeaderDataTable[n]).classList.remove('tablesorter-header-desc');
+            document.getElementById(_this5.HeaderDataTable[n]).classList.add('tablesorter-header-asc');
+          } else {
+            document.getElementById(_this5.HeaderDataTable[n]).classList.remove('tablesorter-header-asc');
+            document.getElementById(_this5.HeaderDataTable[n]).classList.add('tablesorter-header-desc');
+          }
+        };
+      };
+
+      for (var n = 0; n < this.HeaderDataTable.length; n++) {
+        _loop(n);
+      }
+    }
+  }, {
+    key: "paginate",
+    value: function paginate() {}
   }, {
     key: "sort",
     value: function sort(column) {
@@ -157,139 +292,25 @@ function () {
         return ax.length - bx.length;
       }
 
+      var data = this.DataTable;
+
       if (this.Assc) {
         this.Assc = !this.Assc;
-        this.dataTableJson.sort(function (a, b) {
-          return naturalCompare(a[column], b[column]);
-        });
-        this.dataTableJsonA.sort(function (a, b) {
+        data.sort(function (a, b) {
           return naturalCompare(a[column], b[column]);
         });
       } else {
         this.Assc = !this.Assc;
-        this.dataTableJson.sort(function (a, b) {
-          return naturalCompare(a[column], b[column]);
-        });
-        this.dataTableJsonA.sort(function (a, b) {
+        data.sort(function (a, b) {
           return naturalCompare(b[column], a[column]);
         });
-      } // for (let Ox = 0; Ox < this.dataAttributsDate.length; Ox++) {
-      //     if (this.dataAttributsDate[Ox] === 'date') {
-      //             if (this.tHeadData[Ox] === column) {
-      //                 if (this.ToggleS) {
-      //                     this.ToggleS = !this.ToggleS
-      //                     this.dataTableJson.sort((a:any,b:any)=>{
-      //                         return new Date(a[column]).getDate() - new Date(b[column]).getDate()
-      //                     })
-      //                     this.dataTableJsonA.sort((a:any,b:any)=>{
-      //                         return new Date(a[column]).getDate() - new Date(b[column]).getDate()
-      //                     })
-      //                     console.log(new Date('2014-05-11').getDate());
-      //                 } else {
-      //                     this.ToggleS = !this.ToggleS
-      //                     this.dataTableJson.sort((a:any,b:any)=>{
-      //                         return new Date(b[column]).getDate() - new Date(a[column]).getDate()
-      //                     })
-      //                     this.dataTableJsonA.sort((a:any,b:any)=>{
-      //                         return new Date(b[column]).getDate() - new Date(a[column]).getDate()
-      //                     })
-      //                     console.log('o');
-      //                 }
-      //             }
-      //     }
-      // }
-
-
-      this.renderToTable(true);
-      return this.dataTableJson;
-    }
-  }, {
-    key: "renderToTable",
-    value: function renderToTable() {
-      var _this3 = this;
-
-      var cls = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      var pener = document.getElementById(this.idTable);
-      pener.innerHTML = '';
-      var TableHead = '';
-      var ToRow = '';
-
-      if (cls) {
-        ToRow = '';
       }
 
-      var TGB = this.dataTableJsonA.slice((1 - 1) * this.pageSize, 1 * this.pageSize);
-
-      for (var y = 0; y < this.tHeadData.length; y++) {
-        TableHead += "<th style=\"cursor: pointer;\" id=\"".concat(this.tHeadData[y], "\" class=\"columns\">").concat(this.tHeadData[y], "</th>\n");
-      }
-
-      for (var __row = 0; __row < TGB.length; __row++) {
-        var ToCell = '';
-
-        for (var __cell = 0; __cell < this.tHeadData.length; __cell++) {
-          ToCell += "<td>".concat(TGB[__row][this.tHeadData[__cell]], "</td>\n");
-        }
-
-        ToRow += "<tr>".concat(ToCell, "</tr>\n");
-      }
-
-      var tabS = "\n        <thead>\n            <tr>\n                ".concat(TableHead, "\n            </tr>\n        </thead>\n        <tbody>\n            ").concat(ToRow, "\n        </tbody>\n        ");
-      pener.innerHTML = tabS;
-
-      var _loop = function _loop(n) {
-        var cv = document.getElementById(_this3.tHeadData[n]);
-
-        cv.onclick = function () {
-          _this3.sort(_this3.tHeadData[n]);
-        };
-      };
-
-      for (var n = 0; n < this.tHeadData.length; n++) {
-        _loop(n);
-      }
-
-      var _loop2 = function _loop2(__w) {
-        var cv = document.getElementById("P__X__".concat(__w + 1));
-
-        cv.onclick = function () {
-          _this3.paginate(__w + 1);
-
-          cv.style.background = "#ddd";
-        };
-
-        cv.style.background = "#fff";
-      };
-
-      for (var __w = 0; __w < Math.ceil(this.dataTableJson.length / this.pageSize); __w++) {
-        _loop2(__w);
-      }
-
-      for (var x = 0; x < this.tHeadData.length; x++) {
-        console.log(x);
-      }
-
-      console.log(Math.ceil(this.dataTableJson.length / this.pageSize));
-      return tabS;
-    }
-  }, {
-    key: "downloadToCSV",
-    value: function downloadToCSV() {
-      var res = this.tHeadData.join() + '\n';
-      var csv = '';
-      csv += res;
-
-      for (var g = 0; g < this.tBodyData.length; g++) {
-        csv += this.tBodyData[g].join() + '\r\n';
-      }
-
-      var element = document.createElement('a');
-      element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-      element.target = '_blank';
-      element.download = 'export.csv';
-      element.click();
+      this.DataSorted = data;
+      this.RenderToHTML();
+      return this.DataSorted;
     }
   }]);
 
-  return Rtable;
+  return RdataTB;
 }();
