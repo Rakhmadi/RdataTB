@@ -135,7 +135,7 @@ class RdataTB {
         (_a = document.getElementById('SEARCH____X')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', (evt) => {
             this.DataTable = dataTOsrc.filter((element) => {
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
-                    let fg = element[this.HeaderDataTable[index]].toLowerCase().includes(evt.target.value);
+                    let fg = element[this.HeaderDataTable[index]].toLowerCase().includes(evt.target.value.toLowerCase());
                     if (fg) {
                         return fg;
                     }
