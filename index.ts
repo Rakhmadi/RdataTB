@@ -1,5 +1,10 @@
-class RdataTB  {
+/**
+ * 
+ * By Rakhmadi (c) 2021
+ * Under the MIT License.
+ */
 
+class RdataTB  {
     TableElement!: HTMLElement | null;
     HeaderDataTable:Array<any> = []
     RowDataTable:Array<any> = []

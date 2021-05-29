@@ -1,4 +1,9 @@
 "use strict";
+/**
+ *
+ * By Rakhmadi (c) 2021
+ * Under the MIT License.
+ */
 class RdataTB {
     constructor(IdTable) {
         this.HeaderDataTable = [];

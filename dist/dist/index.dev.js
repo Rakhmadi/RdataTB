@@ -17,151 +17,131 @@ function () {
     this.PageSize = 5;
     this.NumSelectedPage = 0;
     this.Assc = true;
-    this.DataPaginate = [];
-    this.SicePage = [];
+    this.LOC = 0;
+    this.i = 0;
     this.TableElement = document.getElementById(IdTable);
+    this.StyleS();
     this.ConvertToJson();
     this.paginateRender();
     this.Control();
     this.search();
-    this.paginateControl();
     this.RenderToHTML();
+    this.PaginateUpdate();
   }
 
   _createClass(RdataTB, [{
-    key: "paginateControl",
-    value: function paginateControl() {
-      var _this = this;
-
-      for (var i = 0; i < this.DataPaginate.length; i += 5) {
-        this.SicePage.push(this.DataPaginate.slice(i, i + 5));
-      }
-
-      var loc = 0;
-
-      function next() {}
-
-      var CL = function CL() {
-        _this.paginateReplace();
-      };
-
-      document.getElementById('x__NEXT__X').onclick = function () {
-        if (loc != _this.SicePage.length - 1) {
-          _this.NumSelectedPage = ++loc;
-        }
-
-        _this.paginateReplace();
-      };
-
-      document.getElementById('x__PREV__X').onclick = function () {
-        if (loc != 0) {
-          _this.NumSelectedPage = --loc;
-          console.log(_this.NumSelectedPage);
-
-          _this.paginateReplace();
-        }
-      };
+    key: "StyleS",
+    value: function StyleS() {
+      var style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerHTML = "/* Pagination links */\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        \n        /* Style the active/current link */\n        .pagination a.active {\n          background-color: dodgerblue;\n          color: white;\n        }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        \n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        /* Add a grey background color on mouse-over */\n        .pagination a:hover:not(.active) {background-color: #ddd;}";
+      document.getElementsByTagName('head')[0].appendChild(style);
     }
   }, {
     key: "Control",
     value: function Control() {
-      var _this2 = this;
+      var _this = this;
 
       var span1 = document.createElement('span');
-      span1.innerHTML = "\n        <table border=\"0\" style=\"width:100%\">\n        <tr>\n          <td style=\"width:50%\">\n             <select id=\"my-select\" class=\"form-select\" style=\"float:left;width:99px!important\">\n             <option value=\"5\">5</option>\n             <option value=\"10\">10</option>\n             <option value=\"15\">15</option>\n             <option value=\"20\">20</option>\n             <option value=\"25\">25</option>\n             </select>\n          </td>\n          <td style=\"width:50%\">\n          <input class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" id=\"SEARCH____X\" style=\"width:30%; float:right ;\">\n          </td>\n        </tr>\n      </table>\n        ";
+      span1.innerHTML = "\n        <table border=\"0\" style=\"width:100%;margin-bottom:12px;\">\n        <tr>\n          <td style=\"width:100%;\">\n             <select id=\"my-select\" class=\"form-select\" style=\"float:left;width:99px!important;margin-right:10px;\">\n             <option value=\"5\">5</option>\n             <option value=\"10\">10</option>\n             <option value=\"15\">15</option>\n             <option value=\"20\">20</option>\n             <option value=\"25\">25</option>\n             </select>\n             <input class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" id=\"SEARCH____X\" style=\"width:30%;margin-left:10px\">\n          </td>\n        </tr>\n      </table>\n        ";
       span1.className = 'Selc';
       this.TableElement.parentNode.insertBefore(span1, this.TableElement);
       this.TableElement.style.width = '100%';
 
       var ChangeV = function ChangeV(params) {
-        _this2.PageSize = params;
-        console.log(_this2.PageSize);
+        _this.PageSize = params;
+        _this.i = 0;
 
-        _this2.paginateReplace();
-
-        _this2.RenderToHTML();
+        _this.RenderToHTML();
       };
 
       document.getElementById('my-select').addEventListener('change', function () {
         ChangeV(this.value);
       });
+
+      document.getElementById('x__NEXT__X').onclick = function () {
+        _this.nextItem();
+      };
+
+      document.getElementById('x__PREV__X').onclick = function () {
+        _this.prevItem();
+      };
     }
   }, {
-    key: "paginateReplace",
-    value: function paginateReplace() {
-      this.paginateCountListed();
-      var innerP = '';
+    key: "nextItem",
+    value: function nextItem() {
+      this.i = this.i + 1; // increase i by one
 
-      for (var z = 0; z < this.SicePage[this.NumSelectedPage].length; z++) {
-        innerP += "<a id=\"P__X__".concat(this.SicePage[this.NumSelectedPage][z], "\" style=\"cursor:pointer;\">").concat(this.SicePage[this.NumSelectedPage][z], "</a>\n");
-      }
+      this.i = this.i % this.Divide(this.DataTable).length; // if we've gone too high, start from `0` again
 
-      var k = "\n            <a href=\"#\" id=\"x__PREV__X\" style=\"cursor:pointer;\">&laquo;</a>\n            ".concat(innerP, "\n            <a href=\"#\" id=\"x__NEXT__X\" style=\"cursor:pointer;\">&raquo;</a>\n            </div>\n            ");
-      var my_elem = document.getElementById('pgN');
-      my_elem.innerHTML = k;
+      this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
+
+      return this.RenderToHTML(this.COntrolDataArr);
     }
   }, {
-    key: "paginateCountListed",
-    value: function paginateCountListed() {
-      this.DataPaginate = [];
-
-      for (var z = 0; z < Math.floor(this.DataTable.length / this.PageSize); z++) {
-        this.DataPaginate.push(z + 1);
+    key: "prevItem",
+    value: function prevItem() {
+      if (this.i === 0) {
+        // i would become 0
+        this.i = this.Divide(this.DataTable).length; // so put it at the other end of the array
       }
+
+      this.i = this.i - 1; // decrease by one
+
+      this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
+
+      return this.RenderToHTML(this.COntrolDataArr);
     }
   }, {
     key: "paginateRender",
     value: function paginateRender() {
-      this.paginateCountListed();
-      var gh = [];
-
-      for (var i = 0; i < this.DataPaginate.length; i += 5) {
-        gh.push(this.DataPaginate.slice(i, i + 5));
-      }
-
-      console.log(gh);
       var innerP = '';
 
       for (var z = 0; z < Math.floor(this.DataTable.length / this.PageSize); z++) {
         innerP += "<a id=\"P__X__".concat(z + 1, "\" style=\"cursor:pointer;\">").concat(z + 1, "</a>\n");
       }
 
-      console.log(innerP);
-      var k = " <div class=\"pagination\" id=\"pgN\">\n        <a href=\"#\" id=\"x__PREV__X\" style=\"cursor:pointer;\">&laquo;</a>\n        ".concat(innerP, "\n        <a href=\"#\" id=\"x__NEXT__X\" style=\"cursor:pointer;\">&raquo;</a>\n        </div>\n        ");
+      var k = " <div class=\"pagination\" id=\"pgN\">\n        <a id=\"x__PREV__X\" style=\"cursor:pointer;user-select: none;\">&laquo;</a>\n           <div id=\"PF\">\n                ".concat(innerP, "\n           </div>\n        <a id=\"x__NEXT__X\" style=\"cursor:pointer;user-select: none;\">&raquo;</a>\n        </div>\n        ");
       var span = document.createElement('span');
       span.innerHTML = k;
       span.className = 'asterisk';
       this.TableElement.parentNode.insertBefore(span, this.TableElement.nextSibling);
     }
   }, {
+    key: "PaginateUpdate",
+    value: function PaginateUpdate() {
+      document.getElementById('PF').innerHTML = "\n            <a style=\"cursor:pointer;\">Page</a>\n            <a style=\"cursor:pointer;\">".concat(this.i + 1, "</a>\n            <a style=\"cursor:pointer;\">of</a>\n            <a style=\"cursor:pointer;\">").concat(this.Divide(this.DataTable).length, "</a>\n            <a style=\"cursor:pointer;\">Entries</a>\n        ");
+    }
+  }, {
     key: "search",
     value: function search() {
-      var _this3 = this;
+      var _this2 = this;
 
       var _a;
 
       var dataTOsrc = this.DataTable;
       (_a = document.getElementById('SEARCH____X')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', function (evt) {
-        _this3.DataTable = dataTOsrc.filter(function (element) {
-          for (var index = 0; index < _this3.HeaderDataTable.length; index++) {
-            var fg = element[_this3.HeaderDataTable[index]].toLowerCase().includes(evt.target.value);
+        _this2.DataTable = dataTOsrc.filter(function (element) {
+          for (var index = 0; index < _this2.HeaderDataTable.length; index++) {
+            var fg = element[_this2.HeaderDataTable[index]].toLowerCase().includes(evt.target.value.toLowerCase());
 
             if (fg) {
               return fg;
             }
           }
         });
-        console.log(_this3.DataSearch);
 
-        _this3.paginateReplace();
+        _this2.RenderToHTML();
 
-        _this3.RenderToHTML();
+        _this2.i = 0;
+
+        _this2.PaginateUpdate();
       });
     }
   }, {
     key: "ConvertToJson",
     value: function ConvertToJson() {
-      var _this4 = this;
+      var _this3 = this;
 
       var _a, _b, _c; //get Header
 
@@ -187,21 +167,23 @@ function () {
 
 
       this.DataTable = this.RowDataTable.reduce(function (akumulasi, e) {
-        akumulasi.push(_this4.HeaderDataTable.reduce(function (x, y, i) {
+        akumulasi.push(_this3.HeaderDataTable.reduce(function (x, y, i) {
           x[y] = e[i];
           return x;
         }, {}));
         return akumulasi;
       }, []);
+      this.DataTableRaw = this.DataTable;
       return this.DataTable;
     }
   }, {
     key: "Divide",
     value: function Divide(data) {
       var gh = [];
+      var h = typeof this.PageSize === "string" ? parseInt(this.PageSize) : this.PageSize;
 
-      for (var i = 0; i < data.length; i += this.PageSize) {
-        gh.push(data.slice(i, i + this.PageSize));
+      for (var i = 0; i < this.DataTable.length; i += h) {
+        gh.push(this.DataTable.slice(i, i + h));
       }
 
       return gh;
@@ -209,11 +191,10 @@ function () {
   }, {
     key: "RenderToHTML",
     value: function RenderToHTML() {
-      var _this5 = this;
+      var _this4 = this;
 
-      console.log(this.Divide(this.DataTable));
-      console.log(Math.floor(this.DataTable.length / 7)); //clear 
-
+      var SlecTloaf = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      //clear 
       this.TableElement.innerHTML = ''; // check if is sorted
 
       var CheckIFSorted = this.DataSorted === null || this.DataSorted === [] || this.DataSorted === undefined ? this.Divide(this.DataTable)[this.NumSelectedPage] : this.Divide(this.DataSorted)[this.NumSelectedPage];
@@ -229,14 +210,26 @@ function () {
       var ifUndefinded = this.DataToRender === undefined ? 0 : this.DataToRender.length;
       var row = '';
 
-      for (var ___row = 0; ___row < ifUndefinded; ___row++) {
-        var ToCell = '';
+      if (SlecTloaf === null) {
+        for (var ___row = 0; ___row < ifUndefinded; ___row++) {
+          var ToCell = '';
 
-        for (var ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
-          ToCell += "<td>".concat(this.DataToRender[___row][this.HeaderDataTable[___cell]], "</td>\n");
+          for (var ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
+            ToCell += "<td>".concat(this.DataToRender[___row][this.HeaderDataTable[___cell]], "</td>\n");
+          }
+
+          row += "<tr>".concat(ToCell, "</tr>\n");
         }
+      } else {
+        for (var _row = 0; _row < SlecTloaf.length; _row++) {
+          var _ToCell = '';
 
-        row += "<tr>".concat(ToCell, "</tr>\n");
+          for (var _cell = 0; _cell < this.HeaderDataTable.length; _cell++) {
+            _ToCell += "<td>".concat(SlecTloaf[_row][this.HeaderDataTable[_cell]], "</td>\n");
+          }
+
+          row += "<tr>".concat(_ToCell, "</tr>\n");
+        }
       } // ====
 
 
@@ -244,20 +237,20 @@ function () {
       this.TableElement.innerHTML = ToEl;
 
       var _loop = function _loop(n) {
-        var cv = document.getElementById(_this5.HeaderDataTable[n]);
-        document.getElementById(_this5.HeaderDataTable[n]).style.opacity = '100%';
+        var cv = document.getElementById(_this4.HeaderDataTable[n]);
+        document.getElementById(_this4.HeaderDataTable[n]).style.opacity = '100%';
 
         cv.onclick = function () {
-          _this5.sort(_this5.HeaderDataTable[n]);
+          _this4.sort(_this4.HeaderDataTable[n]);
 
-          document.getElementById(_this5.HeaderDataTable[n]).style.opacity = '60%';
+          document.getElementById(_this4.HeaderDataTable[n]).style.opacity = '60%';
 
-          if (_this5.Assc) {
-            document.getElementById(_this5.HeaderDataTable[n]).classList.remove('tablesorter-header-desc');
-            document.getElementById(_this5.HeaderDataTable[n]).classList.add('tablesorter-header-asc');
+          if (_this4.Assc) {
+            document.getElementById(_this4.HeaderDataTable[n]).classList.remove('tablesorter-header-desc');
+            document.getElementById(_this4.HeaderDataTable[n]).classList.add('tablesorter-header-asc');
           } else {
-            document.getElementById(_this5.HeaderDataTable[n]).classList.remove('tablesorter-header-asc');
-            document.getElementById(_this5.HeaderDataTable[n]).classList.add('tablesorter-header-desc');
+            document.getElementById(_this4.HeaderDataTable[n]).classList.remove('tablesorter-header-asc');
+            document.getElementById(_this4.HeaderDataTable[n]).classList.add('tablesorter-header-desc');
           }
         };
       };
@@ -265,6 +258,8 @@ function () {
       for (var n = 0; n < this.HeaderDataTable.length; n++) {
         _loop(n);
       }
+
+      this.PaginateUpdate();
     }
   }, {
     key: "paginate",
@@ -307,8 +302,37 @@ function () {
       }
 
       this.DataSorted = data;
+      this.i = 0;
       this.RenderToHTML();
       return this.DataSorted;
+    }
+  }, {
+    key: "DownloadCSV",
+    value: function DownloadCSV() {
+      var filename = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Export';
+      var res = this.HeaderDataTable.join() + '\n';
+      var csv = '';
+      csv += res;
+
+      for (var g = 0; g < this.RowDataTable.length; g++) {
+        csv += this.RowDataTable[g].join() + '\r\n';
+      }
+
+      var element = document.createElement('a');
+      element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      element.target = '_blank';
+      element.download = filename + '.csv';
+      element.click();
+    }
+  }, {
+    key: "DownloadJSON",
+    value: function DownloadJSON() {
+      var filename = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Export';
+      var element = document.createElement('a');
+      element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTableRaw));
+      element.target = '_blank';
+      element.download = filename + '.json';
+      element.click();
     }
   }]);
 
