@@ -134,11 +134,11 @@ class RdataTB {
     }
     search() {
         var _a;
-        let dataTOsrc = this.DataTable;
+        this.DataSearch = this.DataTable;
         (_a = document.getElementById('SEARCH____X')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', (evt) => {
-            this.DataTable = dataTOsrc.filter((element) => {
+            this.DataTable = this.DataSearch.filter((element) => {
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
-                    let fg = element[this.HeaderDataTable[index]].toLowerCase().includes(evt.target.value.toLowerCase());
+                    let fg = element[this.HeaderDataTable[index]].toString().toLowerCase().includes(evt.target.value.toLowerCase());
                     if (fg) {
                         return fg;
                     }
@@ -257,8 +257,8 @@ class RdataTB {
         function naturalCompare(a, b) {
             let ax = [];
             let bx = [];
-            a.replace(/(\d+)|(\D+)/g, function (_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]); });
-            b.replace(/(\d+)|(\D+)/g, function (_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]); });
+            a.toString().replace(/(\d+)|(\D+)/g, function (_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]); });
+            b.toString().replace(/(\d+)|(\D+)/g, function (_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]); });
             while (ax.length && bx.length) {
                 var an = ax.shift();
                 var bn = bx.shift();

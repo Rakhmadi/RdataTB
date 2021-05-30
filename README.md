@@ -17,7 +17,7 @@ simple vanilla javascript datatable
     x.DownloadCSV('filename') // default filename it`s Export
 </script>
 ```
-
+ 
 
 ## Download To JSON
 ```html

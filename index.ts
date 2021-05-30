@@ -150,11 +150,12 @@ class RdataTB  {
     }
 
     public search(){
-        let dataTOsrc = this.DataTable
+        
+        this.DataSearch = this.DataTable
         document.getElementById('SEARCH____X')?.addEventListener('input',(evt)=>{
-            this.DataTable = dataTOsrc.filter( (element:any) =>{ 
+            this.DataTable = this.DataSearch.filter( (element:any) =>{ 
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
-                     let fg = element[this.HeaderDataTable[index]].toLowerCase().includes(evt!.target!.value!.toLowerCase())
+                     let fg = element[this.HeaderDataTable[index]].toString().toLowerCase().includes(evt!.target!.value!.toLowerCase())
                      if (fg) {
                          return fg
                      }
@@ -283,8 +284,8 @@ class RdataTB  {
             let ax:Array<any> = []
             let bx:Array<any> = []
         
-            a.replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { ax.push([$1 || Infinity, $2 || ""]) });
-            b.replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { bx.push([$1 || Infinity, $2 || ""]) });
+            a.toString().replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { ax.push([$1 || Infinity, $2 || ""]) });
+            b.toString().replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { bx.push([$1 || Infinity, $2 || ""]) });
          
             while (ax.length && bx.length) {
               var an = ax.shift();
