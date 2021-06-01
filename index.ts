@@ -19,6 +19,7 @@ class RdataTB  {
     i: number = 0;
     COntrolDataArr: any;
     DataTableRaw: any;
+    searchValue: string = '';
     constructor(IdTable:string) {
         this.TableElement = document.getElementById(IdTable)
         this.StyleS();
@@ -75,6 +76,7 @@ class RdataTB  {
              <option value="15">15</option>
              <option value="20">20</option>
              <option value="25">25</option>
+             <option value="100">100</option>
              </select>
              <input class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:30%;margin-left:10px">
           </td>
@@ -96,9 +98,11 @@ class RdataTB  {
         })
         document.getElementById('x__NEXT__X')!.onclick = ()=>{
             this.nextItem()
+            this.highlight(this.searchValue);
         }
         document.getElementById('x__PREV__X')!.onclick = ()=>{
             this.prevItem()
+            this.highlight(this.searchValue);
         }
         
     }
@@ -122,7 +126,7 @@ class RdataTB  {
 
     public paginateRender(){
         let innerP:any = ''
-        for (let z = 0; z < Math.floor(this.DataTable.length/this.PageSize); z++) {
+        for (let z = 0; z < Math.floor((this.DataTable === undefined)?0:this.DataTable.length/this.PageSize); z++) {
             innerP += `<a id="P__X__${z+1}" style="cursor:pointer;">${z+1}</a>\n`
         }
 
@@ -141,18 +145,14 @@ class RdataTB  {
     }
     public PaginateUpdate(){
         document.getElementById('PF')!.innerHTML = `
-            <a style="cursor:pointer;">Page</a>
-            <a style="cursor:pointer;">${this.i + 1}</a>
-            <a style="cursor:pointer;">of</a>
-            <a style="cursor:pointer;">${this.Divide(this.DataTable).length}</a>
-            <a style="cursor:pointer;">Entries</a>
-        `
+            <a style="">Page ${this.i + 1} to ${this.Divide(this.DataTable).length} of ${(this.DataTable === undefined)?0:this.DataTable.length} Entries</a>`
     }
 
     public search(){
         
         this.DataSearch = this.DataTable
         document.getElementById('SEARCH____X')?.addEventListener('input',(evt)=>{
+            this.searchValue =  evt!.target!.value!
             this.DataTable = this.DataSearch.filter( (element:any) =>{ 
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
                      let fg = element[this.HeaderDataTable[index]].toString().toLowerCase().includes(evt!.target!.value!.toLowerCase())
@@ -161,11 +161,11 @@ class RdataTB  {
                      }
                 }
             })
+            
             this.RenderToHTML()
             this.i = 0
             this.PaginateUpdate()
-
-            
+            this.highlight(evt!.target!.value!)
         })
     }
 
@@ -199,7 +199,7 @@ class RdataTB  {
     public Divide(data:any){
         let gh = []
         let h = (typeof this.PageSize === "string")?parseInt(this.PageSize):this.PageSize;
-        for (var i = 0; i < this.DataTable.length; i += h){
+        for (var i = 0; i < ((this.DataTable === undefined)?0:this.DataTable.length); i += h){
             gh.push(this.DataTable.slice(i,i + h))        
         }
         return gh
@@ -226,7 +226,7 @@ class RdataTB  {
             for (let ___row = 0; ___row < ifUndefinded ; ___row++) {
                 let ToCell:string = ''
                 for (let ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
-                    ToCell += `<td>${this.DataToRender[___row][this.HeaderDataTable[___cell]]}</td>\n`
+                    ToCell += `<td style="">${this.DataToRender[___row][this.HeaderDataTable[___cell]]}</td>\n`
                 }
                 row +=`<tr>${ToCell}</tr>\n` 
             }
@@ -335,5 +335,26 @@ class RdataTB  {
         element.target = '_blank';
         element.download = filename + '.json';
         element.click();
+    }
+
+    highlight(text:string) {
+   
+    let el= this.TableElement!.getElementsByTagName('tbody');
+    console.log(el[0].rows)
+    let getbody:any = this.TableElement?.getElementsByTagName('tbody');
+    for (let row = 0; row < getbody[0].rows.length; row++) {
+       console.log(getbody[0].rows[row]);
+       
+        for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
+            console.log(getbody[0].rows[row].cells[cellsIndex].innerHTML)
+             let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
+             let index = innerHTML.indexOf(text);
+             if (index >= 0) { 
+              innerHTML = innerHTML.substring(0,index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
+              getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
+             }
+           }
+        }
+
     }
 }

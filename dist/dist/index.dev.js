@@ -9,7 +9,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var RdataTB =
 /*#__PURE__*/
 function () {
-  function RdataTB(IdTable) {
+  function RdataTB(IdTable, Options) {
     _classCallCheck(this, RdataTB);
 
     this.HeaderDataTable = [];
@@ -19,6 +19,7 @@ function () {
     this.Assc = true;
     this.LOC = 0;
     this.i = 0;
+    this.GetColumn = [];
     this.TableElement = document.getElementById(IdTable);
     this.StyleS();
     this.ConvertToJson();
@@ -32,8 +33,8 @@ function () {
   _createClass(RdataTB, [{
     key: "StyleS",
     value: function StyleS() {
-      var style = document.createElement('style');
-      style.type = 'text/css';
+      var style = document.createElement('style'); // style.type = 'text/css'; deprecated
+
       style.innerHTML = "/* Pagination links */\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        \n        /* Style the active/current link */\n        .pagination a.active {\n          background-color: dodgerblue;\n          color: white;\n        }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        \n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        /* Add a grey background color on mouse-over */\n        .pagination a:hover:not(.active) {background-color: #ddd;}";
       document.getElementsByTagName('head')[0].appendChild(style);
     }
@@ -43,7 +44,7 @@ function () {
       var _this = this;
 
       var span1 = document.createElement('span');
-      span1.innerHTML = "\n        <table border=\"0\" style=\"width:100%;margin-bottom:12px;\">\n        <tr>\n          <td style=\"width:100%;\">\n             <select id=\"my-select\" class=\"form-select\" style=\"float:left;width:99px!important;margin-right:10px;\">\n             <option value=\"5\">5</option>\n             <option value=\"10\">10</option>\n             <option value=\"15\">15</option>\n             <option value=\"20\">20</option>\n             <option value=\"25\">25</option>\n             </select>\n             <input class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" id=\"SEARCH____X\" style=\"width:30%;margin-left:10px\">\n          </td>\n        </tr>\n      </table>\n        ";
+      span1.innerHTML = "\n        <table border=\"0\" style=\"width:100%;margin-bottom:12px;\">\n        <tr>\n          <td style=\"width:100%;\">\n             <select id=\"my-select\" class=\"form-select\" style=\"float:left;width:99px!important;margin-right:10px;\">\n             <option value=\"5\">5</option>\n             <option value=\"10\">10</option>\n             <option value=\"15\">15</option>\n             <option value=\"20\">20</option>\n             <option value=\"25\">25</option>\n             <option value=\"100\">100</option>\n             </select>\n             <input class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" id=\"SEARCH____X\" style=\"width:30%;margin-left:10px\">\n          </td>\n        </tr>\n      </table>\n        ";
       span1.className = 'Selc';
       this.TableElement.parentNode.insertBefore(span1, this.TableElement);
       this.TableElement.style.width = '100%';
@@ -97,7 +98,7 @@ function () {
     value: function paginateRender() {
       var innerP = '';
 
-      for (var z = 0; z < Math.floor(this.DataTable.length / this.PageSize); z++) {
+      for (var z = 0; z < Math.floor(this.DataTable === undefined ? 0 : this.DataTable.length / this.PageSize); z++) {
         innerP += "<a id=\"P__X__".concat(z + 1, "\" style=\"cursor:pointer;\">").concat(z + 1, "</a>\n");
       }
 
@@ -110,7 +111,7 @@ function () {
   }, {
     key: "PaginateUpdate",
     value: function PaginateUpdate() {
-      document.getElementById('PF').innerHTML = "\n            <a style=\"cursor:pointer;\">Page</a>\n            <a style=\"cursor:pointer;\">".concat(this.i + 1, "</a>\n            <a style=\"cursor:pointer;\">of</a>\n            <a style=\"cursor:pointer;\">").concat(this.Divide(this.DataTable).length, "</a>\n            <a style=\"cursor:pointer;\">Entries</a>\n        ");
+      document.getElementById('PF').innerHTML = "\n            <a style=\"\">Page ".concat(this.i + 1, " to ").concat(this.Divide(this.DataTable).length, " of ").concat(this.DataTable === undefined ? 0 : this.DataTable.length, " Entries</a>");
     }
   }, {
     key: "search",
@@ -119,11 +120,11 @@ function () {
 
       var _a;
 
-      var dataTOsrc = this.DataTable;
+      this.DataSearch = this.DataTable;
       (_a = document.getElementById('SEARCH____X')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', function (evt) {
-        _this2.DataTable = dataTOsrc.filter(function (element) {
+        _this2.DataTable = _this2.DataSearch.filter(function (element) {
           for (var index = 0; index < _this2.HeaderDataTable.length; index++) {
-            var fg = element[_this2.HeaderDataTable[index]].toLowerCase().includes(evt.target.value.toLowerCase());
+            var fg = element[_this2.HeaderDataTable[index]].toString().toLowerCase().includes(evt.target.value.toLowerCase());
 
             if (fg) {
               return fg;
@@ -182,7 +183,7 @@ function () {
       var gh = [];
       var h = typeof this.PageSize === "string" ? parseInt(this.PageSize) : this.PageSize;
 
-      for (var i = 0; i < this.DataTable.length; i += h) {
+      for (var i = 0; i < (this.DataTable === undefined ? 0 : this.DataTable.length); i += h) {
         gh.push(this.DataTable.slice(i, i + h));
       }
 
@@ -215,7 +216,7 @@ function () {
           var ToCell = '';
 
           for (var ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
-            ToCell += "<td>".concat(this.DataToRender[___row][this.HeaderDataTable[___cell]], "</td>\n");
+            ToCell += "<td style=\"\">".concat(this.DataToRender[___row][this.HeaderDataTable[___cell]], "</td>\n");
           }
 
           row += "<tr>".concat(ToCell, "</tr>\n");
@@ -270,10 +271,10 @@ function () {
       function naturalCompare(a, b) {
         var ax = [];
         var bx = [];
-        a.replace(/(\d+)|(\D+)/g, function (_, $1, $2) {
+        a.toString().replace(/(\d+)|(\D+)/g, function (_, $1, $2) {
           ax.push([$1 || Infinity, $2 || ""]);
         });
-        b.replace(/(\d+)|(\D+)/g, function (_, $1, $2) {
+        b.toString().replace(/(\d+)|(\D+)/g, function (_, $1, $2) {
           bx.push([$1 || Infinity, $2 || ""]);
         });
 
@@ -333,6 +334,17 @@ function () {
       element.target = '_blank';
       element.download = filename + '.json';
       element.click();
+    }
+  }, {
+    key: "JsonToTable",
+    value: function JsonToTable(JsonData) {
+      for (var key in JsonData) {
+        this.GetColumn.push(key);
+      }
+
+      this.DataTable = JsonData;
+      this.DataSearch = this.DataTable;
+      this.RenderToHTML();
     }
   }]);
 
