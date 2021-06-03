@@ -3,11 +3,31 @@ simple vanilla javascript datatable
 ## Setup
 
 ```html
-<script src="./dist/index.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Rakhmadi/RdataTB@main/dist/index.js"></script>
 
 <script>
     let x = new RdataTB('youTableid');
 </script>
+```
+### Valid Table syntax
+
+```html
+<table id="myTable">
+	<thead>
+		<tr>
+			<th>Head 1</th>
+			<th>Head 2</th>
+			<th>Head 3</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>data 1</td>
+			<td>data 2</td>
+			<td>data 3</td>
+		</tr>
+	</tbody>
+</table>
 ```
 
 ## Download To CSV
