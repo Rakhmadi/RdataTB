@@ -1,17 +1,19 @@
 "use strict";
 /**
  *
+ *
  * By Rakhmadi (c) 2021
  * Under the MIT License.
+ *
+ *
  */
 class RdataTB {
     constructor(IdTable) {
-        this.HeaderDataTable = [];
-        this.RowDataTable = [];
+        this.HeaderDataTable = []; // header table to array
+        this.RowDataTable = []; // get Table to json
         this.PageSize = 5;
         this.NumSelectedPage = 0;
         this.Assc = true;
-        this.LOC = 0;
         this.i = 0;
         this.searchValue = '';
         this.TableElement = document.getElementById(IdTable);
@@ -218,6 +220,7 @@ class RdataTB {
                 }
                 row += `<tr>${ToCell}</tr>\n`;
             }
+            this.DataToRender = SlecTloaf;
         }
         // ====
         let ToEl = `
@@ -310,12 +313,9 @@ class RdataTB {
     highlight(text) {
         var _a;
         let el = this.TableElement.getElementsByTagName('tbody');
-        console.log(el[0].rows);
         let getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
         for (let row = 0; row < getbody[0].rows.length; row++) {
-            console.log(getbody[0].rows[row]);
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
-                console.log(getbody[0].rows[row].cells[cellsIndex].innerHTML);
                 let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
                 let index = innerHTML.indexOf(text);
                 if (index >= 0) {

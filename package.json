@@ -1,0 +1,26 @@
+{
+  "name": "rdatatb",
+  "version": "0.0.2",
+  "description": "Simple vanilla javascript datatable",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rakhmadi/RdataTB.git"
+  },
+  "keywords": [
+    "vanila-datatable",
+    "data",
+    "table",
+    "bootstrap",
+    "datatable"
+  ],
+  "author": "rakhmadi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Rakhmadi/RdataTB/issues"
+  },
+  "homepage": "https://github.com/Rakhmadi/RdataTB#readme"
+}

@@ -1,6 +1,6 @@
-# RdataTB
+## RdataTB
 simple vanilla javascript datatable 
-## Setup
+### Setup
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/Rakhmadi/RdataTB@main/dist/index.js"></script>
@@ -9,7 +9,7 @@ simple vanilla javascript datatable
     let x = new RdataTB('youTableid');
 </script>
 ```
-### Valid Table syntax
+#### Valid table syntax
 
 ```html
 <table id="myTable">
@@ -29,60 +29,21 @@ simple vanilla javascript datatable
 	</tbody>
 </table>
 ```
+### Class RdataTB()
+#### Property
+| Property | Descriptions |
+|--|--|
+| ```DataTableRaw``` | Get table data in json format |
+|``` HeaderDataTable ```|Get all column name|
+|``` RowDataTable```|Get data in row table|
+|```DataToRender```|Get the data displayed in the table|
 
-## Download To CSV
-```html
-<script>
-    let x = new RdataTB('youTableid');
-    x.DownloadCSV('filename') // default filename it`s Export
-</script>
-```
- 
+#### Methods 
+|Name Methods  | Descriptions|
+|--|--|
+| ``` DownloadCSV('FileName'); ``` | Download table in csv format "default filename is Export" |
+|``` DownloadJSON('FileName');```|Download table in Json format "default filename is Export"|
+|``` sort('columnName'); ```|Sort table by column asc and desc|
+|```nextItem();```|Get next page data|
+|```prevItem();```|Get previous page data|
 
-## Download To JSON
-```html
-<script>
-    let x = new RdataTB('youTableid');
-    x.DownloadJSON('filename') // default filename it`s Export
-</script>
-```
-
-## Get Raw DataTable
-```html
-<script>
-    let x = new RdataTB('youTableid');
-    console.log(x.DataTableRaw)
-</script>
-```
-
-## Get Header table
-```html
-<script>
-    let x = new RdataTB('youTableid');
-    console.log(x.HeaderDataTable)
-</script>
-```
-
-## Get Data Next
-```html
-<script>
-    let x = new RdataTB('youTableid');
-    x.nextItem()
-</script>
-```
-
-## Get Data Prev
-```html
-<script>
-    let x = new RdataTB('youTableid');
-    x.prevItem()
-</script>
-```
-
-## Sorting DataTable by column name
-```html
-<script>
-    let x = new RdataTB('youTableid');
-    x.sort('column_name')
-</script>
-```

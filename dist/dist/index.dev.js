@@ -1,4 +1,9 @@
 "use strict";
+/**
+ *
+ * By Rakhmadi (c) 2021
+ * Under the MIT License.
+ */
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -9,17 +14,18 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var RdataTB =
 /*#__PURE__*/
 function () {
-  function RdataTB(IdTable, Options) {
+  function RdataTB(IdTable) {
     _classCallCheck(this, RdataTB);
 
-    this.HeaderDataTable = [];
-    this.RowDataTable = [];
+    this.HeaderDataTable = []; // header table to array
+
+    this.RowDataTable = []; // get Table to json
+
     this.PageSize = 5;
     this.NumSelectedPage = 0;
     this.Assc = true;
-    this.LOC = 0;
     this.i = 0;
-    this.GetColumn = [];
+    this.searchValue = '';
     this.TableElement = document.getElementById(IdTable);
     this.StyleS();
     this.ConvertToJson();
@@ -33,8 +39,8 @@ function () {
   _createClass(RdataTB, [{
     key: "StyleS",
     value: function StyleS() {
-      var style = document.createElement('style'); // style.type = 'text/css'; deprecated
-
+      var style = document.createElement('style');
+      style.type = 'text/css';
       style.innerHTML = "/* Pagination links */\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        \n        /* Style the active/current link */\n        .pagination a.active {\n          background-color: dodgerblue;\n          color: white;\n        }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        \n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        /* Add a grey background color on mouse-over */\n        .pagination a:hover:not(.active) {background-color: #ddd;}";
       document.getElementsByTagName('head')[0].appendChild(style);
     }
@@ -62,10 +68,14 @@ function () {
 
       document.getElementById('x__NEXT__X').onclick = function () {
         _this.nextItem();
+
+        _this.highlight(_this.searchValue);
       };
 
       document.getElementById('x__PREV__X').onclick = function () {
         _this.prevItem();
+
+        _this.highlight(_this.searchValue);
       };
     }
   }, {
@@ -122,6 +132,7 @@ function () {
 
       this.DataSearch = this.DataTable;
       (_a = document.getElementById('SEARCH____X')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', function (evt) {
+        _this2.searchValue = evt.target.value;
         _this2.DataTable = _this2.DataSearch.filter(function (element) {
           for (var index = 0; index < _this2.HeaderDataTable.length; index++) {
             var fg = element[_this2.HeaderDataTable[index]].toString().toLowerCase().includes(evt.target.value.toLowerCase());
@@ -137,6 +148,8 @@ function () {
         _this2.i = 0;
 
         _this2.PaginateUpdate();
+
+        _this2.highlight(evt.target.value);
       });
     }
   }, {
@@ -336,15 +349,28 @@ function () {
       element.click();
     }
   }, {
-    key: "JsonToTable",
-    value: function JsonToTable(JsonData) {
-      for (var key in JsonData) {
-        this.GetColumn.push(key);
-      }
+    key: "highlight",
+    value: function highlight(text) {
+      var _a;
 
-      this.DataTable = JsonData;
-      this.DataSearch = this.DataTable;
-      this.RenderToHTML();
+      var el = this.TableElement.getElementsByTagName('tbody');
+      console.log(el[0].rows);
+      var getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
+
+      for (var row = 0; row < getbody[0].rows.length; row++) {
+        console.log(getbody[0].rows[row]);
+
+        for (var cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
+          console.log(getbody[0].rows[row].cells[cellsIndex].innerHTML);
+          var innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
+          var index = innerHTML.indexOf(text);
+
+          if (index >= 0) {
+            innerHTML = innerHTML.substring(0, index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index, index + text.length) + "</span>" + innerHTML.substring(index + text.length);
+            getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
+          }
+        }
+      }
     }
   }]);
 

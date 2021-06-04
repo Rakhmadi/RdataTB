@@ -1,21 +1,23 @@
 /**
  * 
+ * 
  * By Rakhmadi (c) 2021
  * Under the MIT License.
+ * 
+ * 
  */
 
 class RdataTB  {
-    TableElement!: HTMLElement | null;
-    HeaderDataTable:Array<any> = []
-    RowDataTable:Array<any> = []
-    DataTable:any
+    TableElement!: HTMLElement | null; // Element Table ById
+    HeaderDataTable:Array<any> = [] ; // header table to array
+    RowDataTable:Array<any> = [] // get Table to json
+    DataTable:any 
     DataSorted:any
     DataToRender:any
     PageSize:number = 5
     NumSelectedPage:number = 0
     Assc: boolean = true
     DataSearch: any;
-    LOC:number = 0
     i: number = 0;
     COntrolDataArr: any;
     DataTableRaw: any;
@@ -107,13 +109,13 @@ class RdataTB  {
         
     }
 
-    nextItem():void {
+    public nextItem():void {
         this.i = this.i + 1; // increase i by one
         this.i = this.i % this.Divide(this.DataTable).length; // if we've gone too high, start from `0` again
          this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
         return this.RenderToHTML(this.COntrolDataArr)
     }
-     prevItem():void {
+    public prevItem():void {
         if (this.i === 0) { // i would become 0
             this.i = this.Divide(this.DataTable).length; // so put it at the other end of the array
         }
@@ -238,6 +240,7 @@ class RdataTB  {
                 }
                 row +=`<tr>${ToCell}</tr>\n` 
             }
+            this.DataToRender = SlecTloaf
         }
 
         // ====
@@ -337,16 +340,12 @@ class RdataTB  {
         element.click();
     }
 
-    highlight(text:string) {
+    public highlight(text:string) {
    
     let el= this.TableElement!.getElementsByTagName('tbody');
-    console.log(el[0].rows)
     let getbody:any = this.TableElement?.getElementsByTagName('tbody');
     for (let row = 0; row < getbody[0].rows.length; row++) {
-       console.log(getbody[0].rows[row]);
-       
         for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
-            console.log(getbody[0].rows[row].cells[cellsIndex].innerHTML)
              let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
              let index = innerHTML.indexOf(text);
              if (index >= 0) { 
