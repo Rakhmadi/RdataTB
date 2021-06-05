@@ -244,19 +244,7 @@ class RdataTB  {
         }
 
         // ====
-        let ToEl=`
-        <thead>
-            <tr>
-                ${header}
-            </tr>
-        </thead>
-        <tbody>
-            ${row}
-        </tbody>
-        <tfoot>
-        ${header}
-        </tfoot>
-        `
+        let ToEl=`<thead><tr>${header}</tr></thead><tbody>${row}</tbody><tfoot>${header}</tfoot>`
         this.TableElement!.innerHTML = ToEl
 
         for (let n = 0; n < this.HeaderDataTable.length; n++) {
@@ -341,8 +329,6 @@ class RdataTB  {
     }
 
     public highlight(text:string) {
-   
-    let el= this.TableElement!.getElementsByTagName('tbody');
     let getbody:any = this.TableElement?.getElementsByTagName('tbody');
     for (let row = 0; row < getbody[0].rows.length; row++) {
         for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
@@ -354,6 +340,5 @@ class RdataTB  {
              }
            }
         }
-
     }
 }

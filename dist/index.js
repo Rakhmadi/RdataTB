@@ -223,19 +223,7 @@ class RdataTB {
             this.DataToRender = SlecTloaf;
         }
         // ====
-        let ToEl = `
-        <thead>
-            <tr>
-                ${header}
-            </tr>
-        </thead>
-        <tbody>
-            ${row}
-        </tbody>
-        <tfoot>
-        ${header}
-        </tfoot>
-        `;
+        let ToEl = `<thead><tr>${header}</tr></thead><tbody>${row}</tbody><tfoot>${header}</tfoot>`;
         this.TableElement.innerHTML = ToEl;
         for (let n = 0; n < this.HeaderDataTable.length; n++) {
             let cv = document.getElementById(this.HeaderDataTable[n]);
@@ -312,7 +300,6 @@ class RdataTB {
     }
     highlight(text) {
         var _a;
-        let el = this.TableElement.getElementsByTagName('tbody');
         let getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
         for (let row = 0; row < getbody[0].rows.length; row++) {
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
