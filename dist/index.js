@@ -28,7 +28,17 @@ class RdataTB {
     StyleS() {
         var style = document.createElement('style');
         style.type = 'text/css';
-        style.innerHTML = `/* Pagination links */
+        style.innerHTML = `
+        table { 
+            table-layout:fixed;
+        }
+        table > thead{
+            -webkit-user-select: none;  
+            -moz-user-select: none;    
+            -ms-user-select: none;      
+            user-select: none;
+        }
+        /* Pagination links */
         .pagination a {
           color: black;
           float: left;
@@ -242,8 +252,6 @@ class RdataTB {
             };
         }
         this.PaginateUpdate();
-    }
-    paginate() {
     }
     sort(column) {
         function naturalCompare(a, b) {

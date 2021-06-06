@@ -35,7 +35,17 @@ class RdataTB  {
     StyleS() {
         var style = document.createElement('style');
         style.type = 'text/css';
-        style.innerHTML = `/* Pagination links */
+        style.innerHTML = `
+        table { 
+            table-layout:fixed;
+        }
+        table > thead{
+            -webkit-user-select: none;  
+            -moz-user-select: none;    
+            -ms-user-select: none;      
+            user-select: none;
+        }
+        /* Pagination links */
         .pagination a {
           color: black;
           float: left;
@@ -93,7 +103,6 @@ class RdataTB  {
             this.PageSize = params
             this.i = 0            
             this.RenderToHTML()
-            
         }
         document.getElementById('my-select')!.addEventListener('change', function(){
             ChangeV(this.value)
@@ -106,7 +115,6 @@ class RdataTB  {
             this.prevItem()
             this.highlight(this.searchValue);
         }
-        
     }
 
     public nextItem():void {
@@ -208,7 +216,6 @@ class RdataTB  {
     }
 
     public RenderToHTML(SlecTloaf:any = null){
-
         //clear 
         this.TableElement!.innerHTML = ''
         // check if is sorted
@@ -264,11 +271,6 @@ class RdataTB  {
         }
         this.PaginateUpdate()
     }
-    
-
-    public paginate(){
-
-    }
 
     public sort(column:string):object{
         function naturalCompare(a:any, b:any) {
@@ -284,7 +286,6 @@ class RdataTB  {
               var nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
               if (nn) return nn;
             }
-         
             return ax.length - bx.length;
          }
         let data = this.DataTable
@@ -293,7 +294,6 @@ class RdataTB  {
             data.sort((a:any,b:any)=>{
                 return naturalCompare(a[column], b[column])
             })
-            
         } else {
             this.Assc = !this.Assc
             data.sort((a:any,b:any)=>{
