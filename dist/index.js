@@ -171,7 +171,7 @@ class RdataTB {
         }
         //get row data
         let getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
-        for (let row = 0; row < ((getbody[0] === undefined) ? 0 : getbody[0].rows); row++) {
+        for (let row = 0; row < ((getbody[0] === undefined) ? 0 : getbody[0].rows.length); row++) {
             let cellsD = [];
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
                 cellsD.push(getbody[0].rows[row].cells[cellsIndex].innerHTML);
