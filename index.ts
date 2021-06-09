@@ -7,6 +7,13 @@
  * 
  */
 
+interface Option{
+    RenderJSON:object | null,
+    ShowSearch:boolean,
+    ShowSelect:boolean,
+    ShowPaginate:boolean,
+}
+
 class RdataTB  {
     TableElement!: HTMLElement | null; // Element Table ById
     HeaderDataTable:Array<any> = [] ; // header table to array
@@ -16,13 +23,22 @@ class RdataTB  {
     DataToRender:any
     PageSize:number = 5
     NumSelectedPage:number = 0
-    Assc: boolean = true
+    Assc: boolean = false
     DataSearch: any;
     i: number = 0;
     COntrolDataArr: any;
     DataTableRaw: any;
     searchValue: string = '';
-    constructor(IdTable:string) {
+    Options: Option;
+    ListHiding:Array<any> = []
+
+    /**
+     * 
+     * @param IdTable Id tabble 
+     * 
+     * @param Options Options
+     */
+    constructor(IdTable:string,Options:Option = {RenderJSON:null,ShowSearch:true,ShowSelect:true,ShowPaginate:true}) {
         this.TableElement = document.getElementById(IdTable)
         this.StyleS();
         this.ConvertToJson()
@@ -31,6 +47,10 @@ class RdataTB  {
         this.search()
         this.RenderToHTML()
         this.PaginateUpdate()
+        this.Options = Options
+        if (Options.RenderJSON != null) {
+            this.JSONinit(Options.RenderJSON)
+        }
     }
     StyleS() {
         var style = document.createElement('style');
@@ -225,8 +245,10 @@ class RdataTB  {
         this.DataToRender = CheckIFSorted
         // HeaderDataTable To Element
         let header:string = ''
+        let footer:string = ''
         for (let I = 0; I < this.HeaderDataTable.length; I++) {
-            header +=`<th style="cursor: pointer;" id="${this.HeaderDataTable[I]}" class="columns tablesorter-header">${this.HeaderDataTable[I]}</th>\n`                       
+            header +=`<th style="cursor: pointer;" id="${this.HeaderDataTable[I]}_header" class="columns tablesorter-header">${this.HeaderDataTable[I]}</th>\n`;
+            footer +=`<th style="cursor: pointer;" id="${this.HeaderDataTable[I]}_footer" class="columns tablesorter-header">${this.HeaderDataTable[I]}</th>\n`;
         }
         // RowDataTable To Element
         let ifUndefinded = (this.DataToRender === undefined) ? 0 : this.DataToRender.length
@@ -235,7 +257,7 @@ class RdataTB  {
             for (let ___row = 0; ___row < ifUndefinded ; ___row++) {
                 let ToCell:string = ''
                 for (let ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
-                    ToCell += `<td style="">${this.DataToRender[___row][this.HeaderDataTable[___cell]]}</td>\n`
+                    ToCell += `<td class="${this.HeaderDataTable[___cell]}__row">${this.DataToRender[___row][this.HeaderDataTable[___cell]]}</td>\n`
                 }
                 row +=`<tr>${ToCell}</tr>\n` 
             }
@@ -251,34 +273,40 @@ class RdataTB  {
         }
 
         // ====
-        let ToEl=`<thead><tr>${header}</tr></thead><tbody>${row}</tbody><tfoot>${header}</tfoot>`
+        let ToEl=`<thead><tr>${header}</tr></thead><tbody>${row}</tbody><tfoot>${footer}</tfoot>`
         this.TableElement!.innerHTML = ToEl
 
         for (let n = 0; n < this.HeaderDataTable.length; n++) {
-            let cv:HTMLElement = document.getElementById(this.HeaderDataTable[n])!;
-            document.getElementById(this.HeaderDataTable[n])!.style.opacity = '100%'        
+            let cv:HTMLElement = document.getElementById(`${this.HeaderDataTable[n]}_header`)!;
+            document.getElementById(`${this.HeaderDataTable[n]}_header`)!.style.opacity = '100%'        
             cv.onclick = ()=>{
-                this.sort(this.HeaderDataTable[n]);
-                document.getElementById(this.HeaderDataTable[n])!.style.opacity = '60%'
+                this.sort(`${this.HeaderDataTable[n]}`);
+                document.getElementById(`${this.HeaderDataTable[n]}_header`)!.style.opacity = '60%'
                 if (this.Assc) {
-                    document.getElementById(this.HeaderDataTable[n])!.classList.remove('tablesorter-header-desc')
-                    document.getElementById(this.HeaderDataTable[n])!.classList.add('tablesorter-header-asc')
+                    document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.remove('tablesorter-header-asc')
+                    document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.add('tablesorter-header-desc')
+
                 } else {
-                    document.getElementById(this.HeaderDataTable[n])!.classList.remove('tablesorter-header-asc')
-                    document.getElementById(this.HeaderDataTable[n])!.classList.add('tablesorter-header-desc')
+                    document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.remove('tablesorter-header-desc')
+                    document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.add('tablesorter-header-asc')
                 }
             }
         }
         this.PaginateUpdate()
     }
 
+    /**
+     * 
+     * @param column name column to sort
+     * @returns show data shorted
+     */
     public sort(column:string):object{
         function naturalCompare(a:any, b:any) {
             let ax:Array<any> = []
             let bx:Array<any> = []
         
-            a.toString().replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { ax.push([$1 || Infinity, $2 || ""]) });
-            b.toString().replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { bx.push([$1 || Infinity, $2 || ""]) });
+            a.toString().replace(/(^\$|,)/g,'').replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { ax.push([$1 || Infinity, $2 || ""]) });
+            b.toString().replace(/(^\$|,)/g,'').replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { bx.push([$1 || Infinity, $2 || ""]) });
          
             while (ax.length && bx.length) {
               var an = ax.shift();
@@ -305,6 +333,12 @@ class RdataTB  {
         this.RenderToHTML()
         return this.DataSorted
     }
+
+    /**
+     * 
+     * @param filename filename to download default is Export
+     * 
+     */
     DownloadCSV(filename:string = 'Export'){
         let res:string = this.HeaderDataTable.join()+'\n'
         let csv:string ='';
@@ -320,6 +354,12 @@ class RdataTB  {
         element.download = filename + '.csv';
         element.click();
     }
+
+    /**
+     * 
+     * @param filename filename to download default is Export
+     * 
+     */
     DownloadJSON(filename:string = 'Export'){
         let element = document.createElement('a')!;
         element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTableRaw));
@@ -327,6 +367,12 @@ class RdataTB  {
         element.download = filename + '.json';
         element.click();
     }
+    
+    /**
+     * 
+     * @param text for highlighting text in table
+     * 
+     */
 
     public highlight(text:string) {
     let getbody:any = this.TableElement?.getElementsByTagName('tbody');
@@ -339,6 +385,36 @@ class RdataTB  {
               getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
              }
            }
+        }
+    }
+
+    /**
+     * 
+     * @param PayLoad you json data to table 
+     * 
+     */
+    public JSONinit(PayLoad:any){
+        this.HeaderDataTable = []
+        for (const key in PayLoad[0]) {
+            this.HeaderDataTable.push(key)
+        }
+        this.DataTable = PayLoad
+        this.DataSearch = PayLoad
+        this.RenderToHTML()
+    }
+    
+    public HideTable(column:string){
+        let Classes = document.getElementsByClassName(`${column}__row`);
+        for (let O = 0; O < Classes.length; O++) {
+            Classes[O].style.display = "none";
+        }
+        document.getElementById(`${column}_header`)!.style.display = "none";
+        document.getElementById(`${column}_footer`)!.style.display = "none";
+    }
+
+    public DoHide(){
+        for (let O = 0; O < this.ListHiding.length; O++) {
+             this.HideTable(this.ListHiding[O]); // Do hiding
         }
     }
 }
