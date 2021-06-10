@@ -130,10 +130,12 @@ class RdataTB  {
         document.getElementById('x__NEXT__X')!.onclick = ()=>{
             this.nextItem()
             this.highlight(this.searchValue);
+            this.DoHide()
         }
         document.getElementById('x__PREV__X')!.onclick = ()=>{
             this.prevItem()
             this.highlight(this.searchValue);
+            this.DoHide()
         }
     }
 
@@ -293,6 +295,9 @@ class RdataTB  {
             }
         }
         this.PaginateUpdate()
+        this.DoHide()
+        console.log(this.ListHiding);
+        
     }
 
     /**
@@ -380,10 +385,14 @@ class RdataTB  {
         for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
              let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
              let index = innerHTML.indexOf(text);
-             if (index >= 0) { 
+             if (index >= 0) {  
               innerHTML = innerHTML.substring(0,index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
               getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
+              console.log(getbody[0].rows[row].cells[cellsIndex].classList.add(`${this.HeaderDataTable[cellsIndex]}__row`));
+              
              }
+             
+             
            }
         }
     }
@@ -403,18 +412,66 @@ class RdataTB  {
         this.RenderToHTML()
     }
     
-    public HideTable(column:string){
+    public HideCol(column:string){
         let Classes = document.getElementsByClassName(`${column}__row`);
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "none";
         }
         document.getElementById(`${column}_header`)!.style.display = "none";
         document.getElementById(`${column}_footer`)!.style.display = "none";
+        console.log(column);
+        
+    }
+
+    public ShowCol(column:string){
+        let Classes = document.getElementsByClassName(`${column}__row`);
+        for (let O = 0; O < Classes.length; O++) {
+            Classes[O].style.display = "";
+        }
+        if (document.getElementById(`${column}_header`)) {
+            document.getElementById(`${column}_header`)!.style.display = "";
+            document.getElementById(`${column}_footer`)!.style.display = "";
+        }        
     }
 
     public DoHide(){
-        for (let O = 0; O < this.ListHiding.length; O++) {
-             this.HideTable(this.ListHiding[O]); // Do hiding
+        const GetHeadArr:Array<string> = this.HeaderDataTable
+        let ListOftrutc:Array<boolean> = []
+        for (let T = 0; T < this.HeaderDataTable.length; T++) {
+            ListOftrutc.push(true)            
         }
+        for (let O = 0; O < this.ListHiding!.length; O++) {
+             let Index = GetHeadArr.indexOf(this.ListHiding[O]);
+             if (Index > -1) {
+                ListOftrutc[Index] = false
+              }
+        }
+
+        let IndexTrue:Array<number> = []
+        let IndexFalse:Array<number> = []
+
+        for (let U = 0; U < ListOftrutc.length; U++) {           
+            if (ListOftrutc[U]) {
+                IndexTrue.push(U)
+            }
+            if(!ListOftrutc[U]){
+                IndexFalse.push(U)
+            }
+        }
+        for (let V = 0; V < IndexTrue.length; V++) {
+            this.ShowCol(GetHeadArr[IndexTrue[V]])
+        }
+        for (let F = 0; F < IndexFalse.length; F++) {
+            this.HideCol(GetHeadArr[IndexFalse[F]])
+        }
+       
+        console.log(IndexFalse);
+        console.log('_______false');
+        console.log(IndexTrue);
+        console.log('_______true');
     }
+
+
+   
+    
 }
