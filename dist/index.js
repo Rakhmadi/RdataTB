@@ -11,10 +11,10 @@ class RdataTB {
     /**
      *
      * @param IdTable Id tabble
-     *
      * @param Options Options
      */
-    constructor(IdTable, Options = { RenderJSON: null, ShowSearch: true, ShowSelect: true, ShowPaginate: true }) {
+    constructor(IdTable, Options = { RenderJSON: null, ShowSearch: true, ShowSelect: true, ShowPaginate: true, SelectionNumber: [5, 10, 20, 50], HideColumn: [] }) {
+        var _a, _b, _c;
         this.HeaderDataTable = []; // header table to array
         this.RowDataTable = []; // get Table to json
         this.PageSize = 5;
@@ -34,6 +34,25 @@ class RdataTB {
         this.Options = Options;
         if (Options.RenderJSON != null) {
             this.JSONinit(Options.RenderJSON);
+        }
+        if (Options.ShowSelect != true) {
+            if (Options.ShowSelect != null || Options.ShowSelect === false) {
+                (_a = document.getElementById('my-select')) === null || _a === void 0 ? void 0 : _a.remove();
+            }
+        }
+        if (Options.ShowPaginate != true) {
+            if (Options.ShowPaginate != null || Options.ShowPaginate === false) {
+                (_b = document.getElementById('pgN')) === null || _b === void 0 ? void 0 : _b.remove();
+            }
+        }
+        if (Options.ShowSearch != true) {
+            if (Options.ShowSearch != null || Options.ShowSearch === false) {
+                (_c = document.getElementById('SearchControl')) === null || _c === void 0 ? void 0 : _c.remove();
+            }
+        }
+        if (Options.HideColumn != null) {
+            this.ListHiding = Options.HideColumn;
+            this.DoHide();
         }
     }
     StyleS() {
@@ -82,7 +101,7 @@ class RdataTB {
     Control() {
         let span1 = document.createElement('span');
         span1.innerHTML = `
-        <table border="0" style="width:100%;margin-bottom:12px;">
+        <table id="C" border="0" style="width:100%;margin-bottom:12px;">
         <tr>
           <td style="width:100%;">
              <select id="my-select" class="form-select" style="float:left;width:99px!important;margin-right:10px;">
@@ -93,7 +112,7 @@ class RdataTB {
              <option value="25">25</option>
              <option value="100">100</option>
              </select>
-             <input class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:30%;margin-left:10px">
+             <input id="SearchControl" class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:30%;margin-left:10px">
           </td>
         </tr>
       </table>
@@ -153,12 +172,15 @@ class RdataTB {
         this.TableElement.parentNode.insertBefore(span, this.TableElement.nextSibling);
     }
     PaginateUpdate() {
-        document.getElementById('PF').innerHTML = `
+        if (document.getElementById('PF') != null) {
+            document.getElementById('PF').innerHTML = `
             <a style="">Page ${this.i + 1} to ${this.Divide(this.DataTable).length} of ${(this.DataTable === undefined) ? 0 : this.DataTable.length} Entries</a>`;
+        }
     }
     search() {
+        var _a;
         this.DataSearch = this.DataTable;
-        document.getElementById('SEARCH____X')?.addEventListener('input', (evt) => {
+        (_a = document.getElementById('SEARCH____X')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', (evt) => {
             this.searchValue = evt.target.value;
             this.DataTable = this.DataSearch.filter((element) => {
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
@@ -175,13 +197,14 @@ class RdataTB {
         });
     }
     ConvertToJson() {
+        var _a, _b, _c;
         //get Header
-        let getHead = this.TableElement?.getElementsByTagName('th');
+        let getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
         for (let v = 0; v < getHead.length; v++) {
-            this.HeaderDataTable?.push(getHead[v].textContent);
+            (_b = this.HeaderDataTable) === null || _b === void 0 ? void 0 : _b.push(getHead[v].textContent);
         }
         //get row data
-        let getbody = this.TableElement?.getElementsByTagName('tbody');
+        let getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
         for (let row = 0; row < ((getbody[0] === undefined) ? 0 : getbody[0].rows.length); row++) {
             let cellsD = [];
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
@@ -266,7 +289,6 @@ class RdataTB {
         }
         this.PaginateUpdate();
         this.DoHide();
-        console.log(this.ListHiding);
     }
     /**
      *
@@ -342,7 +364,8 @@ class RdataTB {
      *
      */
     highlight(text) {
-        let getbody = this.TableElement?.getElementsByTagName('tbody');
+        var _a;
+        let getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
         for (let row = 0; row < getbody[0].rows.length; row++) {
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
                 let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
@@ -374,9 +397,10 @@ class RdataTB {
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "none";
         }
-        document.getElementById(`${column}_header`).style.display = "none";
-        document.getElementById(`${column}_footer`).style.display = "none";
-        console.log(column);
+        if (document.getElementById(`${column}_header`)) {
+            document.getElementById(`${column}_header`).style.display = "none";
+            document.getElementById(`${column}_footer`).style.display = "none";
+        }
     }
     ShowCol(column) {
         let Classes = document.getElementsByClassName(`${column}__row`);
@@ -416,9 +440,5 @@ class RdataTB {
         for (let F = 0; F < IndexFalse.length; F++) {
             this.HideCol(GetHeadArr[IndexFalse[F]]);
         }
-        console.log(IndexFalse);
-        console.log('_______false');
-        console.log(IndexTrue);
-        console.log('_______true');
     }
 }

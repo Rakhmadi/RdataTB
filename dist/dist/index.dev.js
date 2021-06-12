@@ -1,8 +1,11 @@
 "use strict";
 /**
  *
+ *
  * By Rakhmadi (c) 2021
  * Under the MIT License.
+ *
+ *
  */
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14,7 +17,19 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var RdataTB =
 /*#__PURE__*/
 function () {
+  /**
+   *
+   * @param IdTable Id tabble
+   * @param Options Options
+   */
   function RdataTB(IdTable) {
+    var Options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+      RenderJSON: null,
+      ShowSearch: true,
+      ShowSelect: true,
+      ShowPaginate: true
+    };
+
     _classCallCheck(this, RdataTB);
 
     this.HeaderDataTable = []; // header table to array
@@ -23,9 +38,10 @@ function () {
 
     this.PageSize = 5;
     this.NumSelectedPage = 0;
-    this.Assc = true;
+    this.Assc = false;
     this.i = 0;
     this.searchValue = '';
+    this.ListHiding = [];
     this.TableElement = document.getElementById(IdTable);
     this.StyleS();
     this.ConvertToJson();
@@ -34,6 +50,11 @@ function () {
     this.search();
     this.RenderToHTML();
     this.PaginateUpdate();
+    this.Options = Options;
+
+    if (Options.RenderJSON != null) {
+      this.JSONinit(Options.RenderJSON);
+    }
   }
 
   _createClass(RdataTB, [{
@@ -41,7 +62,7 @@ function () {
     value: function StyleS() {
       var style = document.createElement('style');
       style.type = 'text/css';
-      style.innerHTML = "/* Pagination links */\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        \n        /* Style the active/current link */\n        .pagination a.active {\n          background-color: dodgerblue;\n          color: white;\n        }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        \n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        /* Add a grey background color on mouse-over */\n        .pagination a:hover:not(.active) {background-color: #ddd;}";
+      style.innerHTML = "\n        table { \n            table-layout:fixed;\n        }\n        table > thead{\n            -webkit-user-select: none;  \n            -moz-user-select: none;    \n            -ms-user-select: none;      \n            user-select: none;\n        }\n        /* Pagination links */\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        \n        /* Style the active/current link */\n        .pagination a.active {\n          background-color: dodgerblue;\n          color: white;\n        }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        \n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        /* Add a grey background color on mouse-over */\n        .pagination a:hover:not(.active) {background-color: #ddd;}";
       document.getElementsByTagName('head')[0].appendChild(style);
     }
   }, {
@@ -70,12 +91,16 @@ function () {
         _this.nextItem();
 
         _this.highlight(_this.searchValue);
+
+        _this.DoHide();
       };
 
       document.getElementById('x__PREV__X').onclick = function () {
         _this.prevItem();
 
         _this.highlight(_this.searchValue);
+
+        _this.DoHide();
       };
     }
   }, {
@@ -169,7 +194,7 @@ function () {
 
       var getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
 
-      for (var row = 0; row < getbody[0].rows.length; row++) {
+      for (var row = 0; row < (getbody[0] === undefined ? 0 : getbody[0].rows.length); row++) {
         var cellsD = [];
 
         for (var cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
@@ -215,9 +240,11 @@ function () {
       this.DataToRender = CheckIFSorted; // HeaderDataTable To Element
 
       var header = '';
+      var footer = '';
 
       for (var I = 0; I < this.HeaderDataTable.length; I++) {
-        header += "<th style=\"cursor: pointer;\" id=\"".concat(this.HeaderDataTable[I], "\" class=\"columns tablesorter-header\">").concat(this.HeaderDataTable[I], "</th>\n");
+        header += "<th style=\"cursor: pointer;\" id=\"".concat(this.HeaderDataTable[I], "_header\" class=\"columns tablesorter-header\">").concat(this.HeaderDataTable[I], "</th>\n");
+        footer += "<th style=\"cursor: pointer;\" id=\"".concat(this.HeaderDataTable[I], "_footer\" class=\"columns tablesorter-header\">").concat(this.HeaderDataTable[I], "</th>\n");
       } // RowDataTable To Element
 
 
@@ -229,7 +256,7 @@ function () {
           var ToCell = '';
 
           for (var ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
-            ToCell += "<td style=\"\">".concat(this.DataToRender[___row][this.HeaderDataTable[___cell]], "</td>\n");
+            ToCell += "<td class=\"".concat(this.HeaderDataTable[___cell], "__row\">").concat(this.DataToRender[___row][this.HeaderDataTable[___cell]], "</td>\n");
           }
 
           row += "<tr>".concat(ToCell, "</tr>\n");
@@ -244,27 +271,29 @@ function () {
 
           row += "<tr>".concat(_ToCell, "</tr>\n");
         }
+
+        this.DataToRender = SlecTloaf;
       } // ====
 
 
-      var ToEl = "\n        <thead>\n            <tr>\n                ".concat(header, "\n            </tr>\n        </thead>\n        <tbody>\n            ").concat(row, "\n        </tbody>\n        <tfoot>\n        ").concat(header, "\n        </tfoot>\n        ");
+      var ToEl = "<thead><tr>".concat(header, "</tr></thead><tbody>").concat(row, "</tbody><tfoot>").concat(footer, "</tfoot>");
       this.TableElement.innerHTML = ToEl;
 
       var _loop = function _loop(n) {
-        var cv = document.getElementById(_this4.HeaderDataTable[n]);
-        document.getElementById(_this4.HeaderDataTable[n]).style.opacity = '100%';
+        var cv = document.getElementById("".concat(_this4.HeaderDataTable[n], "_header"));
+        document.getElementById("".concat(_this4.HeaderDataTable[n], "_header")).style.opacity = '100%';
 
         cv.onclick = function () {
-          _this4.sort(_this4.HeaderDataTable[n]);
+          _this4.sort("".concat(_this4.HeaderDataTable[n]));
 
-          document.getElementById(_this4.HeaderDataTable[n]).style.opacity = '60%';
+          document.getElementById("".concat(_this4.HeaderDataTable[n], "_header")).style.opacity = '60%';
 
           if (_this4.Assc) {
-            document.getElementById(_this4.HeaderDataTable[n]).classList.remove('tablesorter-header-desc');
-            document.getElementById(_this4.HeaderDataTable[n]).classList.add('tablesorter-header-asc');
+            document.getElementById("".concat(_this4.HeaderDataTable[n], "_header")).classList.remove('tablesorter-header-asc');
+            document.getElementById("".concat(_this4.HeaderDataTable[n], "_header")).classList.add('tablesorter-header-desc');
           } else {
-            document.getElementById(_this4.HeaderDataTable[n]).classList.remove('tablesorter-header-asc');
-            document.getElementById(_this4.HeaderDataTable[n]).classList.add('tablesorter-header-desc');
+            document.getElementById("".concat(_this4.HeaderDataTable[n], "_header")).classList.remove('tablesorter-header-desc');
+            document.getElementById("".concat(_this4.HeaderDataTable[n], "_header")).classList.add('tablesorter-header-asc');
           }
         };
       };
@@ -274,20 +303,24 @@ function () {
       }
 
       this.PaginateUpdate();
+      this.DoHide();
     }
-  }, {
-    key: "paginate",
-    value: function paginate() {}
+    /**
+     *
+     * @param column name column to sort
+     * @returns show data shorted
+     */
+
   }, {
     key: "sort",
     value: function sort(column) {
       function naturalCompare(a, b) {
         var ax = [];
         var bx = [];
-        a.toString().replace(/(\d+)|(\D+)/g, function (_, $1, $2) {
+        a.toString().replace(/(^\$|,)/g, '').replace(/(\d+)|(\D+)/g, function (_, $1, $2) {
           ax.push([$1 || Infinity, $2 || ""]);
         });
-        b.toString().replace(/(\d+)|(\D+)/g, function (_, $1, $2) {
+        b.toString().replace(/(^\$|,)/g, '').replace(/(\d+)|(\D+)/g, function (_, $1, $2) {
           bx.push([$1 || Infinity, $2 || ""]);
         });
 
@@ -320,6 +353,12 @@ function () {
       this.RenderToHTML();
       return this.DataSorted;
     }
+    /**
+     *
+     * @param filename filename to download default is Export
+     *
+     */
+
   }, {
     key: "DownloadCSV",
     value: function DownloadCSV() {
@@ -338,6 +377,12 @@ function () {
       element.download = filename + '.csv';
       element.click();
     }
+    /**
+     *
+     * @param filename filename to download default is Export
+     *
+     */
+
   }, {
     key: "DownloadJSON",
     value: function DownloadJSON() {
@@ -348,28 +393,116 @@ function () {
       element.download = filename + '.json';
       element.click();
     }
+    /**
+     *
+     * @param text for highlighting text in table
+     *
+     */
+
   }, {
     key: "highlight",
     value: function highlight(text) {
       var _a;
 
-      var el = this.TableElement.getElementsByTagName('tbody');
-      console.log(el[0].rows);
       var getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
 
       for (var row = 0; row < getbody[0].rows.length; row++) {
-        console.log(getbody[0].rows[row]);
-
         for (var cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
-          console.log(getbody[0].rows[row].cells[cellsIndex].innerHTML);
           var innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
           var index = innerHTML.indexOf(text);
 
           if (index >= 0) {
             innerHTML = innerHTML.substring(0, index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index, index + text.length) + "</span>" + innerHTML.substring(index + text.length);
             getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
+            console.log(getbody[0].rows[row].cells[cellsIndex].classList.add("".concat(this.HeaderDataTable[cellsIndex], "__row")));
           }
         }
+      }
+    }
+    /**
+     *
+     * @param PayLoad you json data to table
+     *
+     */
+
+  }, {
+    key: "JSONinit",
+    value: function JSONinit(PayLoad) {
+      this.HeaderDataTable = [];
+
+      for (var key in PayLoad[0]) {
+        this.HeaderDataTable.push(key);
+      }
+
+      this.DataTable = PayLoad;
+      this.DataSearch = PayLoad;
+      this.RenderToHTML();
+    }
+  }, {
+    key: "HideCol",
+    value: function HideCol(column) {
+      var Classes = document.getElementsByClassName("".concat(column, "__row"));
+
+      for (var O = 0; O < Classes.length; O++) {
+        Classes[O].style.display = "none";
+      }
+
+      if (document.getElementById("".concat(column, "_header"))) {
+        document.getElementById("".concat(column, "_header")).style.display = "none";
+        document.getElementById("".concat(column, "_footer")).style.display = "none";
+      }
+    }
+  }, {
+    key: "ShowCol",
+    value: function ShowCol(column) {
+      var Classes = document.getElementsByClassName("".concat(column, "__row"));
+
+      for (var O = 0; O < Classes.length; O++) {
+        Classes[O].style.display = "";
+      }
+
+      if (document.getElementById("".concat(column, "_header"))) {
+        document.getElementById("".concat(column, "_header")).style.display = "";
+        document.getElementById("".concat(column, "_footer")).style.display = "";
+      }
+    }
+  }, {
+    key: "DoHide",
+    value: function DoHide() {
+      var GetHeadArr = this.HeaderDataTable;
+      var ListOftrutc = [];
+
+      for (var T = 0; T < this.HeaderDataTable.length; T++) {
+        ListOftrutc.push(true);
+      }
+
+      for (var O = 0; O < this.ListHiding.length; O++) {
+        var Index = GetHeadArr.indexOf(this.ListHiding[O]);
+
+        if (Index > -1) {
+          ListOftrutc[Index] = false;
+        }
+      }
+
+      var IndexTrue = [];
+      var IndexFalse = [];
+
+      for (var U = 0; U < ListOftrutc.length; U++) {
+        if (ListOftrutc[U]) {
+          IndexTrue.push(U);
+        }
+
+        if (!ListOftrutc[U]) {
+          IndexFalse.push(U);
+        }
+      }
+
+      for (var V = 0; V < IndexTrue.length; V++) {
+        this.ShowCol(GetHeadArr[IndexTrue[V]]);
+      }
+
+      for (var F = 0; F < IndexFalse.length; F++) {
+        this.HideCol(GetHeadArr[IndexFalse[F]]);
       }
     }
   }]);

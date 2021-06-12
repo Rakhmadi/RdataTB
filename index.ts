@@ -7,12 +7,6 @@
  * 
  */
 
-interface Option{
-    RenderJSON:object | null,
-    ShowSearch:boolean,
-    ShowSelect:boolean,
-    ShowPaginate:boolean,
-}
 
 class RdataTB  {
     TableElement!: HTMLElement | null; // Element Table ById
@@ -29,16 +23,15 @@ class RdataTB  {
     COntrolDataArr: any;
     DataTableRaw: any;
     searchValue: string = '';
-    Options: Option;
+    Options:any;
     ListHiding:Array<any> = []
 
     /**
      * 
      * @param IdTable Id tabble 
-     * 
      * @param Options Options
      */
-    constructor(IdTable:string,Options:Option = {RenderJSON:null,ShowSearch:true,ShowSelect:true,ShowPaginate:true}) {
+    constructor(IdTable:string,Options = {RenderJSON:null,ShowSearch:true,ShowSelect:true,ShowPaginate:true,SelectionNumber:[5,10,20,50],HideColumn:[]}) {
         this.TableElement = document.getElementById(IdTable)
         this.StyleS();
         this.ConvertToJson()
@@ -51,6 +44,26 @@ class RdataTB  {
         if (Options.RenderJSON != null) {
             this.JSONinit(Options.RenderJSON)
         }
+        if (Options.ShowSelect != true) {
+            if (Options.ShowSelect != null || Options.ShowSelect === false){
+                document.getElementById('my-select')?.remove()
+            }
+        }
+        if (Options.ShowPaginate != true) {
+            if (Options.ShowPaginate != null || Options.ShowPaginate === false){
+                document.getElementById('pgN')?.remove()
+            }
+        }
+        if (Options.ShowSearch != true) {
+            if (Options.ShowSearch != null || Options.ShowSearch === false){
+                document.getElementById('SearchControl')?.remove()
+            }
+        }
+        if (Options.HideColumn != null) {
+            this.ListHiding = Options.HideColumn
+            this.DoHide()
+        }
+  
     }
     StyleS() {
         var style = document.createElement('style');
@@ -99,7 +112,7 @@ class RdataTB  {
     public Control(){
         let span1 = document.createElement('span');
         span1.innerHTML = `
-        <table border="0" style="width:100%;margin-bottom:12px;">
+        <table id="C" border="0" style="width:100%;margin-bottom:12px;">
         <tr>
           <td style="width:100%;">
              <select id="my-select" class="form-select" style="float:left;width:99px!important;margin-right:10px;">
@@ -110,7 +123,7 @@ class RdataTB  {
              <option value="25">25</option>
              <option value="100">100</option>
              </select>
-             <input class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:30%;margin-left:10px">
+             <input id="SearchControl" class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:30%;margin-left:10px">
           </td>
         </tr>
       </table>
@@ -176,8 +189,10 @@ class RdataTB  {
         this.TableElement!.parentNode!.insertBefore(span, this.TableElement!.nextSibling)
     }
     public PaginateUpdate(){
-        document.getElementById('PF')!.innerHTML = `
+        if (document.getElementById('PF') != null) {
+            document.getElementById('PF')!.innerHTML = `
             <a style="">Page ${this.i + 1} to ${this.Divide(this.DataTable).length} of ${(this.DataTable === undefined)?0:this.DataTable.length} Entries</a>`
+        }
     }
 
     public search(){
@@ -295,9 +310,7 @@ class RdataTB  {
             }
         }
         this.PaginateUpdate()
-        this.DoHide()
-        console.log(this.ListHiding);
-        
+        this.DoHide() 
     }
 
     /**
@@ -378,7 +391,6 @@ class RdataTB  {
      * @param text for highlighting text in table
      * 
      */
-
     public highlight(text:string) {
     let getbody:any = this.TableElement?.getElementsByTagName('tbody');
     for (let row = 0; row < getbody[0].rows.length; row++) {
@@ -389,10 +401,7 @@ class RdataTB  {
               innerHTML = innerHTML.substring(0,index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
               getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
               console.log(getbody[0].rows[row].cells[cellsIndex].classList.add(`${this.HeaderDataTable[cellsIndex]}__row`));
-              
              }
-             
-             
            }
         }
     }
@@ -417,10 +426,10 @@ class RdataTB  {
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "none";
         }
+        if (document.getElementById(`${column}_header`)) {
         document.getElementById(`${column}_header`)!.style.display = "none";
         document.getElementById(`${column}_footer`)!.style.display = "none";
-        console.log(column);
-        
+        }
     }
 
     public ShowCol(column:string){
@@ -438,7 +447,7 @@ class RdataTB  {
         const GetHeadArr:Array<string> = this.HeaderDataTable
         let ListOftrutc:Array<boolean> = []
         for (let T = 0; T < this.HeaderDataTable.length; T++) {
-            ListOftrutc.push(true)            
+            ListOftrutc.push(true)
         }
         for (let O = 0; O < this.ListHiding!.length; O++) {
              let Index = GetHeadArr.indexOf(this.ListHiding[O]);
@@ -464,14 +473,5 @@ class RdataTB  {
         for (let F = 0; F < IndexFalse.length; F++) {
             this.HideCol(GetHeadArr[IndexFalse[F]])
         }
-       
-        console.log(IndexFalse);
-        console.log('_______false');
-        console.log(IndexTrue);
-        console.log('_______true');
     }
-
-
-   
-    
 }
