@@ -105,7 +105,17 @@ class RdataTB  {
             float: right;
         }
         /* Add a grey background color on mouse-over */
-        .pagination a:hover:not(.active) {background-color: #ddd;}`;
+        .pagination a:hover:not(.active) {background-color: #ddd;}
+        .blink_me {
+            animation: blinker 1s linear infinite;
+          }
+          
+          @keyframes blinker {
+            50% {
+              opacity: 0;
+            }
+          }
+          `;
         document.getElementsByTagName('head')[0].appendChild(style);
     }
 
