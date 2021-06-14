@@ -97,12 +97,12 @@ class RdataTB {
         /* Add a grey background color on mouse-over */
         .pagination a:hover:not(.active) {background-color: #ddd;}
         .blink_me {
-            animation: blinker 1s linear infinite;
+            animation: blinker 1s;
           }
           
           @keyframes blinker {
             50% {
-              opacity: 0;
+              opacity: .4;
             }
           }
           `;
@@ -294,6 +294,11 @@ class RdataTB {
                 else {
                     document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.remove('tablesorter-header-desc');
                     document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.add('tablesorter-header-asc');
+                }
+                //animate
+                let s = document.getElementsByClassName(`${this.HeaderDataTable[n]}__row`);
+                for (let NN = 0; NN < s.length; NN++) {
+                    setTimeout(() => s[NN].classList.add('blink_me'), 21 * NN);
                 }
             };
         }

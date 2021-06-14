@@ -107,12 +107,12 @@ class RdataTB  {
         /* Add a grey background color on mouse-over */
         .pagination a:hover:not(.active) {background-color: #ddd;}
         .blink_me {
-            animation: blinker 1s linear infinite;
+            animation: blinker 1s;
           }
           
           @keyframes blinker {
             50% {
-              opacity: 0;
+              opacity: .4;
             }
           }
           `;
@@ -305,8 +305,11 @@ class RdataTB  {
 
         for (let n = 0; n < this.HeaderDataTable.length; n++) {
             let cv:HTMLElement = document.getElementById(`${this.HeaderDataTable[n]}_header`)!;
-            document.getElementById(`${this.HeaderDataTable[n]}_header`)!.style.opacity = '100%'        
+            document.getElementById(`${this.HeaderDataTable[n]}_header`)!.style.opacity = '100%'
+
+            
             cv.onclick = ()=>{
+
                 this.sort(`${this.HeaderDataTable[n]}`);
                 document.getElementById(`${this.HeaderDataTable[n]}_header`)!.style.opacity = '60%'
                 if (this.Assc) {
@@ -316,6 +319,11 @@ class RdataTB  {
                 } else {
                     document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.remove('tablesorter-header-desc')
                     document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.add('tablesorter-header-asc')
+                }
+                //animate
+                let s:any = document.getElementsByClassName(`${this.HeaderDataTable[n]}__row`)
+                for (let NN = 0; NN < s.length; NN++) {
+                    setTimeout(()=>s[NN].classList.add('blink_me'),21*NN)            
                 }
             }
         }
