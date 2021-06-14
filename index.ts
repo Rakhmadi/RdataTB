@@ -30,6 +30,7 @@ class RdataTB  {
      * 
      * @param IdTable Id tabble 
      * @param Options Options
+     * 
      */
     constructor(IdTable:string,Options = {RenderJSON:null,ShowSearch:true,ShowSelect:true,ShowPaginate:true,SelectionNumber:[5,10,20,50],HideColumn:[]}) {
         this.TableElement = document.getElementById(IdTable)
@@ -112,7 +113,7 @@ class RdataTB  {
           
           @keyframes blinker {
             50% {
-              opacity: .4;
+              opacity: .5;
             }
           }
           `;
@@ -133,7 +134,7 @@ class RdataTB  {
              <option value="25">25</option>
              <option value="100">100</option>
              </select>
-             <input id="SearchControl" class="form-control shadow-none" placeholder="Search" type="text" id="SEARCH____X" style="width:30%;margin-left:10px">
+             <input id="SearchControl" class="form-control shadow-none" placeholder="Search" type="text" style="width:30%;margin-left:10px">
           </td>
         </tr>
       </table>
@@ -165,16 +166,19 @@ class RdataTB  {
     public nextItem():void {
         this.i = this.i + 1; // increase i by one
         this.i = this.i % this.Divide(this.DataTable).length; // if we've gone too high, start from `0` again
-         this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
-        return this.RenderToHTML(this.COntrolDataArr)
+        this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
+        this.RenderToHTML(this.COntrolDataArr)
+        this.DoHide()
+        
     }
     public prevItem():void {
         if (this.i === 0) { // i would become 0
             this.i = this.Divide(this.DataTable).length; // so put it at the other end of the array
         }
         this.i = this.i - 1; // decrease by one
-         this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
-        return this.RenderToHTML(this.COntrolDataArr)
+        this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
+        this.RenderToHTML(this.COntrolDataArr)
+        this.DoHide()
     }
 
     
@@ -208,7 +212,7 @@ class RdataTB  {
     public search(){
         
         this.DataSearch = this.DataTable
-        document.getElementById('SEARCH____X')?.addEventListener('input',(evt)=>{
+        document.getElementById('SearchControl')?.addEventListener('input',(evt)=>{
             this.searchValue =  evt!.target!.value!
             this.DataTable = this.DataSearch.filter( (element:any) =>{ 
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
@@ -352,7 +356,7 @@ class RdataTB  {
             }
             return ax.length - bx.length;
          }
-        let data = this.DataTable
+        const data = this.DataTable
         if (this.Assc) {
             this.Assc = !this.Assc
             data.sort((a:any,b:any)=>{
@@ -376,16 +380,18 @@ class RdataTB  {
      * 
      */
     DownloadCSV(filename:string = 'Export'){
-        let res:string = this.HeaderDataTable.join()+'\n'
-        let csv:string ='';
-        
-        csv += res;
-        for (let g = 0; g < this.RowDataTable.length; g++) {
-            csv += this.RowDataTable[g].join()+'\r\n';
+        let str = '';
+        for (let i = 0; i < this.DataTable.length; i++) {
+            let line = '';
+            for (let index in this.DataTable[i]) {
+                if (line != '') line += ','
+                line += this.DataTable[i][index];
+            }
+            str += line + '\r\n';
         }
         
         let element = document.createElement('a')!;
-        element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+        element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(str);
         element.target = '_blank';
         element.download = filename + '.csv';
         element.click();
@@ -398,7 +404,7 @@ class RdataTB  {
      */
     DownloadJSON(filename:string = 'Export'){
         let element = document.createElement('a')!;
-        element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTableRaw));
+        element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTable));
         element.target = '_blank';
         element.download = filename + '.json';
         element.click();
@@ -416,9 +422,9 @@ class RdataTB  {
              let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
              let index = innerHTML.indexOf(text);
              if (index >= 0) {  
-              innerHTML = innerHTML.substring(0,index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
+              innerHTML = innerHTML.substring(0,index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length) ;
               getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
-              console.log(getbody[0].rows[row].cells[cellsIndex].classList.add(`${this.HeaderDataTable[cellsIndex]}__row`));
+              getbody[0].rows[row].cells[cellsIndex].classList.add(`${this.HeaderDataTable[cellsIndex].replace(/\s/g,'_')}__row`);
              }
            }
         }
