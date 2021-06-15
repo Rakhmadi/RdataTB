@@ -24,7 +24,9 @@ class RdataTB  {
     DataTableRaw: any;
     searchValue: string = '';
     Options:any;
-    ListHiding:Array<any> = []
+    ListHiding:Array<string> = []
+    SelectionNumber: number[] = [5,10,20,50]
+    SelectElementString: any;
 
     /**
      * 
@@ -59,10 +61,16 @@ class RdataTB  {
             if (Options.ShowSearch != null || Options.ShowSearch === false){
                 document.getElementById('SearchControl')?.remove()
             }
-        }
+        }   
+        
         if (Options.HideColumn != null) {
             this.ListHiding = Options.HideColumn
             this.DoHide()
+        }
+   
+        if (Options.SelectionNumber != null) {
+            this.SelectionNumber = Options.SelectionNumber
+            this.ChangeSelect()
         }
   
     }
@@ -120,19 +128,24 @@ class RdataTB  {
         document.getElementsByTagName('head')[0].appendChild(style);
     }
 
+    public ChangeSelect(){
+        this.SelectElementString = '' 
+        for (let x = 0; x < this.SelectionNumber.length; x++) {
+            this.SelectElementString += `<option value="${this.SelectionNumber[x]}">${this.SelectionNumber[x]}</option>`
+        }
+        document.getElementById("my-select")!.innerHTML = this.SelectElementString
+        return this.SelectElementString;
+    }
+
     public Control(){
+
         let span1 = document.createElement('span');
         span1.innerHTML = `
         <table id="C" border="0" style="width:100%;margin-bottom:12px;">
         <tr>
           <td style="width:100%;">
              <select id="my-select" class="form-select" style="float:left;width:99px!important;margin-right:10px;">
-             <option value="5">5</option>
-             <option value="10">10</option>
-             <option value="15">15</option>
-             <option value="20">20</option>
-             <option value="25">25</option>
-             <option value="100">100</option>
+             <option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="50">50</option>
              </select>
              <input id="SearchControl" class="form-control shadow-none" placeholder="Search" type="text" style="width:30%;margin-left:10px">
           </td>
