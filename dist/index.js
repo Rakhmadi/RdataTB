@@ -158,12 +158,21 @@ class RdataTB {
             this.DoHide();
         };
     }
+    getNextItem() {
+        this.nextItem();
+        this.highlight(this.searchValue);
+        this.DoHide();
+    }
+    getPrevItem() {
+        this.prevItem();
+        this.highlight(this.searchValue);
+        this.DoHide();
+    }
     nextItem() {
         this.i = this.i + 1; // increase i by one
         this.i = this.i % this.Divide(this.DataTable).length; // if we've gone too high, start from `0` again
         this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
         this.RenderToHTML(this.COntrolDataArr);
-        this.DoHide();
     }
     prevItem() {
         if (this.i === 0) { // i would become 0
@@ -172,7 +181,6 @@ class RdataTB {
         this.i = this.i - 1; // decrease by one
         this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
         this.RenderToHTML(this.COntrolDataArr);
-        this.DoHide();
     }
     paginateRender() {
         let innerP = '';
