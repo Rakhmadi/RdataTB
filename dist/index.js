@@ -18,13 +18,20 @@ class RdataTB {
         var _a, _b, _c;
         this.HeaderDataTable = []; // header table to array
         this.RowDataTable = []; // get Table to json
+        this.DataTable = [];
+        this.DataSorted = [];
+        this.DataToRender = [];
         this.PageSize = 5;
         this.NumSelectedPage = 0;
         this.Assc = false;
+        this.DataSearch = [];
         this.i = 0;
+        this.COntrolDataArr = [];
+        this.DataTableRaw = [];
         this.searchValue = '';
         this.ListHiding = [];
         this.SelectionNumber = [5, 10, 20, 50];
+        this.SelectElementString = '';
         this.TableElement = document.getElementById(IdTable);
         this.StyleS();
         this.ConvertToJson();
@@ -421,7 +428,7 @@ class RdataTB {
      * @param PayLoad you json data to table
      *
      */
-    JSONinit(PayLoad) {
+    JSONinit(PayLoad = []) {
         this.HeaderDataTable = [];
         for (const key in PayLoad[0]) {
             this.HeaderDataTable.push(key);

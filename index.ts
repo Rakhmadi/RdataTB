@@ -7,26 +7,35 @@
  * 
  */
 
+interface IOptions{
+    RenderJSON: Array<any> | null,
+    ShowSearch:Boolean,
+    ShowSelect:Boolean,
+    ShowPaginate:Boolean,
+    SelectionNumber:Array<number>,
+    HideColumn:Array<string>
+}
+
 
 class RdataTB  {
     TableElement!: HTMLElement | null; // Element Table ById
-    HeaderDataTable:Array<any> = [] ; // header table to array
+    HeaderDataTable:Array<number | string | any> = [] ; // header table to array
     RowDataTable:Array<any> = [] // get Table to json
-    DataTable:any 
-    DataSorted:any
-    DataToRender:any
+    DataTable:Array<number | string | any> = []
+    DataSorted:Array<number | string | any> = []
+    DataToRender:Array<number | string | any> = []
     PageSize:number = 5
     NumSelectedPage:number = 0
     Assc: boolean = false
-    DataSearch: any;
+    DataSearch: Array<number | string | any> = [];
     i: number = 0;
-    COntrolDataArr: any;
-    DataTableRaw: any;
+    COntrolDataArr: Array<number | string | any> = [];
+    DataTableRaw: Array<number | string | any> = [];
     searchValue: string = '';
-    Options:any;
+    Options: IOptions;
     ListHiding:Array<string> = []
     SelectionNumber: number[] = [5,10,20,50]
-    SelectElementString: any;
+    SelectElementString: string = '';
 
     /**
      * 
@@ -34,7 +43,7 @@ class RdataTB  {
      * @param Options Options
      * 
      */
-    constructor(IdTable:string,Options = {RenderJSON:null,ShowSearch:true,ShowSelect:true,ShowPaginate:true,SelectionNumber:[5,10,20,50],HideColumn:[]}) {
+    constructor(IdTable:string,Options:IOptions = {RenderJSON:null,ShowSearch:true,ShowSelect:true,ShowPaginate:true,SelectionNumber:[5,10,20,50],HideColumn:[]}) {
         this.TableElement = document.getElementById(IdTable)
         this.StyleS();
         this.ConvertToJson()
@@ -256,12 +265,12 @@ class RdataTB  {
 
     public ConvertToJson():object{
         //get Header
-        let getHead:any = this.TableElement?.getElementsByTagName('th');
+        let getHead:Array<any> | any = this.TableElement?.getElementsByTagName('th');
         for (let v = 0; v < getHead.length; v++) {
             this.HeaderDataTable?.push(getHead[v].textContent)
         }
         //get row data
-        let getbody:any = this.TableElement?.getElementsByTagName('tbody');
+        let getbody:Array<any> | any = this.TableElement?.getElementsByTagName('tbody');
         for (let row = 0; row < ((getbody[0] === undefined)? 0 : getbody[0].rows.length); row++) {
             let cellsD = []
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
@@ -290,7 +299,7 @@ class RdataTB  {
         return gh
     }
 
-    public RenderToHTML(SlecTloaf:any = null){
+    public RenderToHTML(SlecTloaf:Array<number | string | any> | null = null){
         //clear 
         this.TableElement!.innerHTML = ''
         // check if is sorted
@@ -459,7 +468,7 @@ class RdataTB  {
      * @param PayLoad you json data to table 
      * 
      */
-    public JSONinit(PayLoad:any){
+    public JSONinit(PayLoad:Array<number | string | any> = []){
         this.HeaderDataTable = []
         for (const key in PayLoad[0]) {
             this.HeaderDataTable.push(key)
