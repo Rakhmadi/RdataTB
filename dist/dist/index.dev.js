@@ -21,27 +21,40 @@ function () {
    *
    * @param IdTable Id tabble
    * @param Options Options
+   *
    */
   function RdataTB(IdTable) {
     var Options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
       RenderJSON: null,
       ShowSearch: true,
       ShowSelect: true,
-      ShowPaginate: true
+      ShowPaginate: true,
+      SelectionNumber: [5, 10, 20, 50],
+      HideColumn: []
     };
 
     _classCallCheck(this, RdataTB);
+
+    var _a, _b, _c;
 
     this.HeaderDataTable = []; // header table to array
 
     this.RowDataTable = []; // get Table to json
 
+    this.DataTable = [];
+    this.DataSorted = [];
+    this.DataToRender = [];
     this.PageSize = 5;
     this.NumSelectedPage = 0;
     this.Assc = false;
+    this.DataSearch = [];
     this.i = 0;
+    this.COntrolDataArr = [];
+    this.DataTableRaw = [];
     this.searchValue = '';
     this.ListHiding = [];
+    this.SelectionNumber = [5, 10, 20, 50];
+    this.SelectElementString = '';
     this.TableElement = document.getElementById(IdTable);
     this.StyleS();
     this.ConvertToJson();
@@ -55,6 +68,34 @@ function () {
     if (Options.RenderJSON != null) {
       this.JSONinit(Options.RenderJSON);
     }
+
+    if (Options.ShowSelect != true) {
+      if (Options.ShowSelect != null || Options.ShowSelect === false) {
+        (_a = document.getElementById('my-select')) === null || _a === void 0 ? void 0 : _a.remove();
+      }
+    }
+
+    if (Options.ShowPaginate != true) {
+      if (Options.ShowPaginate != null || Options.ShowPaginate === false) {
+        (_b = document.getElementById('pgN')) === null || _b === void 0 ? void 0 : _b.remove();
+      }
+    }
+
+    if (Options.ShowSearch != true) {
+      if (Options.ShowSearch != null || Options.ShowSearch === false) {
+        (_c = document.getElementById('SearchControl')) === null || _c === void 0 ? void 0 : _c.remove();
+      }
+    }
+
+    if (Options.HideColumn != null) {
+      this.ListHiding = Options.HideColumn;
+      this.DoHide();
+    }
+
+    if (Options.SelectionNumber != null) {
+      this.SelectionNumber = Options.SelectionNumber;
+      this.ChangeSelect();
+    }
   }
 
   _createClass(RdataTB, [{
@@ -62,8 +103,20 @@ function () {
     value: function StyleS() {
       var style = document.createElement('style');
       style.type = 'text/css';
-      style.innerHTML = "\n        table { \n            table-layout:fixed;\n        }\n        table > thead{\n            -webkit-user-select: none;  \n            -moz-user-select: none;    \n            -ms-user-select: none;      \n            user-select: none;\n        }\n        /* Pagination links */\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        \n        /* Style the active/current link */\n        .pagination a.active {\n          background-color: dodgerblue;\n          color: white;\n        }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        \n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        /* Add a grey background color on mouse-over */\n        .pagination a:hover:not(.active) {background-color: #ddd;}";
+      style.innerHTML = "\n        table { \n            table-layout:fixed;\n        }\n        table > thead{\n            -webkit-user-select: none;  \n            -moz-user-select: none;    \n            -ms-user-select: none;      \n            user-select: none;\n        }\n        /* Pagination links */\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        \n        /* Style the active/current link */\n        .pagination a.active {\n          background-color: dodgerblue;\n          color: white;\n        }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        \n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        /* Add a grey background color on mouse-over */\n        .pagination a:hover:not(.active) {background-color: #ddd;}\n        .blink_me {\n            animation: blinker 1s;\n          }\n          \n          @keyframes blinker {\n            50% {\n              opacity: .5;\n            }\n          }\n          ";
       document.getElementsByTagName('head')[0].appendChild(style);
+    }
+  }, {
+    key: "ChangeSelect",
+    value: function ChangeSelect() {
+      this.SelectElementString = '';
+
+      for (var x = 0; x < this.SelectionNumber.length; x++) {
+        this.SelectElementString += "<option value=\"".concat(this.SelectionNumber[x], "\">").concat(this.SelectionNumber[x], "</option>");
+      }
+
+      document.getElementById("my-select").innerHTML = this.SelectElementString;
+      return this.SelectElementString;
     }
   }, {
     key: "Control",
@@ -71,7 +124,7 @@ function () {
       var _this = this;
 
       var span1 = document.createElement('span');
-      span1.innerHTML = "\n        <table border=\"0\" style=\"width:100%;margin-bottom:12px;\">\n        <tr>\n          <td style=\"width:100%;\">\n             <select id=\"my-select\" class=\"form-select\" style=\"float:left;width:99px!important;margin-right:10px;\">\n             <option value=\"5\">5</option>\n             <option value=\"10\">10</option>\n             <option value=\"15\">15</option>\n             <option value=\"20\">20</option>\n             <option value=\"25\">25</option>\n             <option value=\"100\">100</option>\n             </select>\n             <input class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" id=\"SEARCH____X\" style=\"width:30%;margin-left:10px\">\n          </td>\n        </tr>\n      </table>\n        ";
+      span1.innerHTML = "\n        <table id=\"C\" border=\"0\" style=\"width:100%;margin-bottom:12px;\">\n        <tr>\n          <td style=\"width:100%;\">\n             <select id=\"my-select\" class=\"form-select\" style=\"float:left;width:99px!important;margin-right:10px;\">\n             <option value=\"5\">5</option><option value=\"10\">10</option><option value=\"20\">20</option><option value=\"50\">50</option>\n             </select>\n             <input id=\"SearchControl\" class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" style=\"width:30%;margin-left:10px\">\n          </td>\n        </tr>\n      </table>\n        ";
       span1.className = 'Selc';
       this.TableElement.parentNode.insertBefore(span1, this.TableElement);
       this.TableElement.style.width = '100%';
@@ -104,6 +157,20 @@ function () {
       };
     }
   }, {
+    key: "getNextItem",
+    value: function getNextItem() {
+      this.nextItem();
+      this.highlight(this.searchValue);
+      this.DoHide();
+    }
+  }, {
+    key: "getPrevItem",
+    value: function getPrevItem() {
+      this.prevItem();
+      this.highlight(this.searchValue);
+      this.DoHide();
+    }
+  }, {
     key: "nextItem",
     value: function nextItem() {
       this.i = this.i + 1; // increase i by one
@@ -112,7 +179,7 @@ function () {
 
       this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
 
-      return this.RenderToHTML(this.COntrolDataArr);
+      this.RenderToHTML(this.COntrolDataArr);
     }
   }, {
     key: "prevItem",
@@ -126,7 +193,7 @@ function () {
 
       this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
 
-      return this.RenderToHTML(this.COntrolDataArr);
+      this.RenderToHTML(this.COntrolDataArr);
     }
   }, {
     key: "paginateRender",
@@ -146,7 +213,9 @@ function () {
   }, {
     key: "PaginateUpdate",
     value: function PaginateUpdate() {
-      document.getElementById('PF').innerHTML = "\n            <a style=\"\">Page ".concat(this.i + 1, " to ").concat(this.Divide(this.DataTable).length, " of ").concat(this.DataTable === undefined ? 0 : this.DataTable.length, " Entries</a>");
+      if (document.getElementById('PF') != null) {
+        document.getElementById('PF').innerHTML = "\n            <a style=\"\">Page ".concat(this.i + 1, " to ").concat(this.Divide(this.DataTable).length, " of ").concat(this.DataTable === undefined ? 0 : this.DataTable.length, " Entries</a>");
+      }
     }
   }, {
     key: "search",
@@ -156,7 +225,7 @@ function () {
       var _a;
 
       this.DataSearch = this.DataTable;
-      (_a = document.getElementById('SEARCH____X')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', function (evt) {
+      (_a = document.getElementById('SearchControl')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', function (evt) {
         _this2.searchValue = evt.target.value;
         _this2.DataTable = _this2.DataSearch.filter(function (element) {
           for (var index = 0; index < _this2.HeaderDataTable.length; index++) {
@@ -294,6 +363,19 @@ function () {
           } else {
             document.getElementById("".concat(_this4.HeaderDataTable[n], "_header")).classList.remove('tablesorter-header-desc');
             document.getElementById("".concat(_this4.HeaderDataTable[n], "_header")).classList.add('tablesorter-header-asc');
+          } //animate
+
+
+          var s = document.getElementsByClassName("".concat(_this4.HeaderDataTable[n], "__row"));
+
+          var _loop2 = function _loop2(NN) {
+            setTimeout(function () {
+              return s[NN].classList.add('blink_me');
+            }, 21 * NN);
+          };
+
+          for (var NN = 0; NN < s.length; NN++) {
+            _loop2(NN);
           }
         };
       };
@@ -363,16 +445,21 @@ function () {
     key: "DownloadCSV",
     value: function DownloadCSV() {
       var filename = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Export';
-      var res = this.HeaderDataTable.join() + '\n';
-      var csv = '';
-      csv += res;
+      var str = '';
 
-      for (var g = 0; g < this.RowDataTable.length; g++) {
-        csv += this.RowDataTable[g].join() + '\r\n';
+      for (var i = 0; i < this.DataTable.length; i++) {
+        var line = '';
+
+        for (var index in this.DataTable[i]) {
+          if (line != '') line += ',';
+          line += this.DataTable[i][index];
+        }
+
+        str += line + '\r\n';
       }
 
       var element = document.createElement('a');
-      element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(str);
       element.target = '_blank';
       element.download = filename + '.csv';
       element.click();
@@ -388,7 +475,7 @@ function () {
     value: function DownloadJSON() {
       var filename = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Export';
       var element = document.createElement('a');
-      element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTableRaw));
+      element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTable));
       element.target = '_blank';
       element.download = filename + '.json';
       element.click();
@@ -414,7 +501,7 @@ function () {
           if (index >= 0) {
             innerHTML = innerHTML.substring(0, index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index, index + text.length) + "</span>" + innerHTML.substring(index + text.length);
             getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
-            console.log(getbody[0].rows[row].cells[cellsIndex].classList.add("".concat(this.HeaderDataTable[cellsIndex], "__row")));
+            getbody[0].rows[row].cells[cellsIndex].classList.add("".concat(this.HeaderDataTable[cellsIndex].replace(/\s/g, '_'), "__row"));
           }
         }
       }
@@ -427,7 +514,8 @@ function () {
 
   }, {
     key: "JSONinit",
-    value: function JSONinit(PayLoad) {
+    value: function JSONinit() {
+      var PayLoad = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
       this.HeaderDataTable = [];
 
       for (var key in PayLoad[0]) {
