@@ -14,7 +14,7 @@ You can enter options in the second parameter
 ```html
 <script>
     let x = new RdataTB('youTableid',{
-		RenderJSON:null, // Convert Json to Table html 
+		RenderJSON:[], // Convert Json to Table html 
 		ShowSearch:true,
 		ShowSelect:true,
 		ShowPaginate:true,
