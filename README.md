@@ -1,12 +1,26 @@
 ## RdataTB
 simple vanilla javascript datatable 
-### Setup
+#### Setup
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/Rakhmadi/RdataTB@main/dist/index.js"></script>
 
 <script>
     let x = new RdataTB('youTableid');
+</script>
+```
+#### Options 
+You can enter options in the second parameter
+```html
+<script>
+    let x = new RdataTB('youTableid',{
+		RenderJSON:null, // Convert Json to Table html 
+		ShowSearch:true,
+		ShowSelect:true,
+		ShowPaginate:true,
+		SelectionNumber:[5,10,20,50], //Change Option in Select
+		HideColumn:[] // Hide column
+	});
 </script>
 ```
 #### Valid table syntax
@@ -44,6 +58,6 @@ simple vanilla javascript datatable
 | ``` DownloadCSV('FileName'); ``` | Download table in csv format "default filename is Export" |
 |``` DownloadJSON('FileName');```|Download table in Json format "default filename is Export"|
 |``` sort('columnName'); ```|Sort table by column asc and desc|
-|```nextItem();```|Get next page data|
-|```prevItem();```|Get previous page data|
+|```getNextItem();```|Get next page data|
+|```getPrevItem();```|Get previous page data|
 
