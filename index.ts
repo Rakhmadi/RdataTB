@@ -246,10 +246,10 @@ class RdataTB  {
         
         this.DataSearch = this.DataTable
         document.getElementById('SearchControl')?.addEventListener('input',(evt)=>{
-            this.searchValue =  evt!.target!.value!
+            this.searchValue =  (<HTMLInputElement>evt.target).value
             this.DataTable = this.DataSearch.filter( (element:any) =>{ 
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
-                     const fg = element[this.HeaderDataTable[index]].toString().toLowerCase().includes(evt!.target!.value!.toLowerCase())
+                     const fg = element[this.HeaderDataTable[index]].toString().toLowerCase().includes((<HTMLInputElement>evt.target).value.toLowerCase())
                      if (fg) {
                          return fg
                      }
@@ -259,7 +259,7 @@ class RdataTB  {
             this.RenderToHTML()
             this.i = 0
             this.PaginateUpdate()
-            this.highlight(evt!.target!.value!)
+            this.highlight((<HTMLInputElement>evt.target).value)
         })
     }
 
