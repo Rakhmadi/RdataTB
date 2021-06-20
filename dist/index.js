@@ -69,7 +69,7 @@ class RdataTB {
         }
     }
     StyleS() {
-        var style = document.createElement('style');
+        const style = document.createElement('style');
         style.type = 'text/css';
         style.innerHTML = `
         table { 
@@ -117,7 +117,7 @@ class RdataTB {
             50% {
               opacity: .5;
             }
-          }
+          } 
           `;
         document.getElementsByTagName('head')[0].appendChild(style);
     }
@@ -130,7 +130,7 @@ class RdataTB {
         return this.SelectElementString;
     }
     Control() {
-        let span1 = document.createElement('span');
+        const span1 = document.createElement('span');
         span1.innerHTML = `
         <table id="C" border="0" style="width:100%;margin-bottom:12px;">
         <tr>
@@ -177,16 +177,16 @@ class RdataTB {
     }
     nextItem() {
         this.i = this.i + 1; // increase i by one
-        this.i = this.i % this.Divide(this.DataTable).length; // if we've gone too high, start from `0` again
-        this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
+        this.i = this.i % this.Divide().length; // if we've gone too high, start from `0` again
+        this.COntrolDataArr = this.Divide()[this.i]; // give us back the item of where we are now
         this.RenderToHTML(this.COntrolDataArr);
     }
     prevItem() {
         if (this.i === 0) { // i would become 0
-            this.i = this.Divide(this.DataTable).length; // so put it at the other end of the array
+            this.i = this.Divide().length; // so put it at the other end of the array
         }
         this.i = this.i - 1; // decrease by one
-        this.COntrolDataArr = this.Divide(this.DataTable)[this.i]; // give us back the item of where we are now
+        this.COntrolDataArr = this.Divide()[this.i]; // give us back the item of where we are now
         this.RenderToHTML(this.COntrolDataArr);
     }
     paginateRender() {
@@ -194,7 +194,7 @@ class RdataTB {
         for (let z = 0; z < Math.floor((this.DataTable === undefined) ? 0 : this.DataTable.length / this.PageSize); z++) {
             innerP += `<a id="P__X__${z + 1}" style="cursor:pointer;">${z + 1}</a>\n`;
         }
-        let k = ` <div class="pagination" id="pgN">
+        const k = ` <div class="pagination" id="pgN">
         <a id="x__PREV__X" style="cursor:pointer;user-select: none;">&laquo;</a>
            <div id="PF">
                 ${innerP}
@@ -202,7 +202,7 @@ class RdataTB {
         <a id="x__NEXT__X" style="cursor:pointer;user-select: none;">&raquo;</a>
         </div>
         `;
-        let span = document.createElement('span');
+        const span = document.createElement('span');
         span.innerHTML = k;
         span.className = 'asterisk';
         this.TableElement.parentNode.insertBefore(span, this.TableElement.nextSibling);
@@ -210,7 +210,7 @@ class RdataTB {
     PaginateUpdate() {
         if (document.getElementById('PF') != null) {
             document.getElementById('PF').innerHTML = `
-            <a style="">Page ${this.i + 1} to ${this.Divide(this.DataTable).length} of ${(this.DataTable === undefined) ? 0 : this.DataTable.length} Entries</a>`;
+            <a style="">Page ${this.i + 1} to ${this.Divide().length} of ${(this.DataTable === undefined) ? 0 : this.DataTable.length} Entries</a>`;
         }
     }
     search() {
@@ -220,7 +220,7 @@ class RdataTB {
             this.searchValue = evt.target.value;
             this.DataTable = this.DataSearch.filter((element) => {
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
-                    let fg = element[this.HeaderDataTable[index]].toString().toLowerCase().includes(evt.target.value.toLowerCase());
+                    const fg = element[this.HeaderDataTable[index]].toString().toLowerCase().includes(evt.target.value.toLowerCase());
                     if (fg) {
                         return fg;
                     }
@@ -235,14 +235,14 @@ class RdataTB {
     ConvertToJson() {
         var _a, _b, _c;
         //get Header
-        let getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
+        const getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
         for (let v = 0; v < getHead.length; v++) {
             (_b = this.HeaderDataTable) === null || _b === void 0 ? void 0 : _b.push(getHead[v].textContent);
         }
         //get row data
-        let getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
+        const getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
         for (let row = 0; row < ((getbody[0] === undefined) ? 0 : getbody[0].rows.length); row++) {
-            let cellsD = [];
+            const cellsD = [];
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
                 cellsD.push(getbody[0].rows[row].cells[cellsIndex].innerHTML);
             }
@@ -259,10 +259,10 @@ class RdataTB {
         this.DataTableRaw = this.DataTable;
         return this.DataTable;
     }
-    Divide(data) {
-        let gh = [];
-        let h = (typeof this.PageSize === "string") ? parseInt(this.PageSize) : this.PageSize;
-        for (var i = 0; i < ((this.DataTable === undefined) ? 0 : this.DataTable.length); i += h) {
+    Divide() {
+        const gh = [];
+        const h = (typeof this.PageSize === "string") ? parseInt(this.PageSize) : this.PageSize;
+        for (let i = 0; i < ((this.DataTable === undefined) ? 0 : this.DataTable.length); i += h) {
             gh.push(this.DataTable.slice(i, i + h));
         }
         return gh;
@@ -271,9 +271,9 @@ class RdataTB {
         //clear 
         this.TableElement.innerHTML = '';
         // check if is sorted
-        let CheckIFSorted = (this.DataSorted === null || this.DataSorted === [] || this.DataSorted === undefined) ?
-            this.Divide(this.DataTable)[this.NumSelectedPage]
-            : this.Divide(this.DataSorted)[this.NumSelectedPage];
+        const CheckIFSorted = (this.DataSorted === null || this.DataSorted === [] || this.DataSorted === undefined) ?
+            this.Divide()[this.NumSelectedPage]
+            : this.Divide()[this.NumSelectedPage];
         this.DataToRender = CheckIFSorted;
         // HeaderDataTable To Element
         let header = '';
@@ -283,7 +283,7 @@ class RdataTB {
             footer += `<th style="cursor: pointer;" id="${this.HeaderDataTable[I]}_footer" class="columns tablesorter-header">${this.HeaderDataTable[I]}</th>\n`;
         }
         // RowDataTable To Element
-        let ifUndefinded = (this.DataToRender === undefined) ? 0 : this.DataToRender.length;
+        const ifUndefinded = (this.DataToRender === undefined) ? 0 : this.DataToRender.length;
         let row = '';
         if (SlecTloaf === null) {
             for (let ___row = 0; ___row < ifUndefinded; ___row++) {
@@ -305,10 +305,10 @@ class RdataTB {
             this.DataToRender = SlecTloaf;
         }
         // ====
-        let ToEl = `<thead><tr>${header}</tr></thead><tbody>${row}</tbody><tfoot>${footer}</tfoot>`;
+        const ToEl = `<thead><tr>${header}</tr></thead><tbody>${row}</tbody><tfoot>${footer}</tfoot>`;
         this.TableElement.innerHTML = ToEl;
         for (let n = 0; n < this.HeaderDataTable.length; n++) {
-            let cv = document.getElementById(`${this.HeaderDataTable[n]}_header`);
+            const cv = document.getElementById(`${this.HeaderDataTable[n]}_header`);
             document.getElementById(`${this.HeaderDataTable[n]}_header`).style.opacity = '100%';
             cv.onclick = () => {
                 this.sort(`${this.HeaderDataTable[n]}`);
@@ -322,7 +322,7 @@ class RdataTB {
                     document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.add('tablesorter-header-asc');
                 }
                 //animate
-                let s = document.getElementsByClassName(`${this.HeaderDataTable[n]}__row`);
+                const s = document.getElementsByClassName(`${this.HeaderDataTable[n]}__row`);
                 for (let NN = 0; NN < s.length; NN++) {
                     setTimeout(() => s[NN].classList.add('blink_me'), 21 * NN);
                 }
@@ -338,14 +338,14 @@ class RdataTB {
      */
     sort(column) {
         function naturalCompare(a, b) {
-            let ax = [];
-            let bx = [];
+            const ax = [];
+            const bx = [];
             a.toString().replace(/(^\$|,)/g, '').replace(/(\d+)|(\D+)/g, function (_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]); });
             b.toString().replace(/(^\$|,)/g, '').replace(/(\d+)|(\D+)/g, function (_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]); });
             while (ax.length && bx.length) {
-                var an = ax.shift();
-                var bn = bx.shift();
-                var nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
+                const an = ax.shift();
+                const bn = bx.shift();
+                const nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
                 if (nn)
                     return nn;
             }
@@ -378,14 +378,14 @@ class RdataTB {
         let str = '';
         for (let i = 0; i < this.DataTable.length; i++) {
             let line = '';
-            for (let index in this.DataTable[i]) {
+            for (const index in this.DataTable[i]) {
                 if (line != '')
                     line += ',';
                 line += this.DataTable[i][index];
             }
             str += line + '\r\n';
         }
-        let element = document.createElement('a');
+        const element = document.createElement('a');
         element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(str);
         element.target = '_blank';
         element.download = filename + '.csv';
@@ -397,7 +397,7 @@ class RdataTB {
      *
      */
     DownloadJSON(filename = 'Export') {
-        let element = document.createElement('a');
+        const element = document.createElement('a');
         element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTable));
         element.target = '_blank';
         element.download = filename + '.json';
@@ -410,11 +410,11 @@ class RdataTB {
      */
     highlight(text) {
         var _a;
-        let getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
+        const getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
         for (let row = 0; row < getbody[0].rows.length; row++) {
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
                 let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
-                let index = innerHTML.indexOf(text);
+                const index = innerHTML.indexOf(text);
                 if (index >= 0) {
                     innerHTML = innerHTML.substring(0, index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index, index + text.length) + "</span>" + innerHTML.substring(index + text.length);
                     getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
@@ -438,7 +438,7 @@ class RdataTB {
         this.RenderToHTML();
     }
     HideCol(column) {
-        let Classes = document.getElementsByClassName(`${column}__row`);
+        const Classes = document.getElementsByClassName(`${column}__row`);
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "none";
         }
@@ -448,7 +448,7 @@ class RdataTB {
         }
     }
     ShowCol(column) {
-        let Classes = document.getElementsByClassName(`${column}__row`);
+        const Classes = document.getElementsByClassName(`${column}__row`);
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "";
         }
@@ -459,18 +459,18 @@ class RdataTB {
     }
     DoHide() {
         const GetHeadArr = this.HeaderDataTable;
-        let ListOftrutc = [];
+        const ListOftrutc = [];
         for (let T = 0; T < this.HeaderDataTable.length; T++) {
             ListOftrutc.push(true);
         }
         for (let O = 0; O < this.ListHiding.length; O++) {
-            let Index = GetHeadArr.indexOf(this.ListHiding[O]);
+            const Index = GetHeadArr.indexOf(this.ListHiding[O]);
             if (Index > -1) {
                 ListOftrutc[Index] = false;
             }
         }
-        let IndexTrue = [];
-        let IndexFalse = [];
+        const IndexTrue = [];
+        const IndexFalse = [];
         for (let U = 0; U < ListOftrutc.length; U++) {
             if (ListOftrutc[U]) {
                 IndexTrue.push(U);
