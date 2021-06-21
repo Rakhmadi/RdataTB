@@ -311,7 +311,7 @@ class RdataTB {
             const cv = document.getElementById(`${this.HeaderDataTable[n]}_header`);
             document.getElementById(`${this.HeaderDataTable[n]}_header`).style.opacity = '100%';
             cv.onclick = () => {
-                this.sort(`${this.HeaderDataTable[n]}`);
+                this.sort(this.HeaderDataTable[n]);
                 document.getElementById(`${this.HeaderDataTable[n]}_header`).style.opacity = '60%';
                 if (this.Assc) {
                     document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.remove('tablesorter-header-asc');
@@ -337,12 +337,13 @@ class RdataTB {
      * @returns show data shorted
      */
     sort(column) {
+        const t0 = performance.now();
         function naturalCompare(a, b) {
             const ax = [];
             const bx = [];
             a.toString().replace(/(^\$|,)/g, '').replace(/(\d+)|(\D+)/g, function (_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]); });
             b.toString().replace(/(^\$|,)/g, '').replace(/(\d+)|(\D+)/g, function (_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]); });
-            while (ax.length && bx.length) {
+            for (let index = 0; ax.length && bx.length; index++) {
                 const an = ax.shift();
                 const bn = bx.shift();
                 const nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
@@ -367,6 +368,9 @@ class RdataTB {
         this.DataSorted = data;
         this.i = 0;
         this.RenderToHTML();
+        const t1 = performance.now();
+        this.timeSort = Math.round((t1 - t0) / 1000 * 10000) / 10000;
+        console.log("" + this.timeSort + " milliseconds.");
         return this.DataSorted;
     }
     /**

@@ -36,6 +36,7 @@ class RdataTB  {
     ListHiding:Array<string> = []
     SelectionNumber: number[] = [5,10,20,50]
     SelectElementString: string = '';
+    timeSort!: number;
 
     /**
      * 
@@ -347,7 +348,7 @@ class RdataTB  {
             
             cv.onclick = ()=>{
 
-                this.sort(`${this.HeaderDataTable[n]}`);
+                this.sort(this.HeaderDataTable[n]);
                 document.getElementById(`${this.HeaderDataTable[n]}_header`)!.style.opacity = '60%'
                 if (this.Assc) {
                     document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.remove('tablesorter-header-asc')
@@ -374,19 +375,20 @@ class RdataTB  {
      * @returns show data shorted
      */
     public sort(column:string):Array<any>{
+        const t0:number = performance.now()
         function naturalCompare(a:any, b:any) {
             const ax:Array<any> = []
             const bx:Array<any> = []
-        
             a.toString().replace(/(^\$|,)/g,'').replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { ax.push([$1 || Infinity, $2 || ""]) });
             b.toString().replace(/(^\$|,)/g,'').replace(/(\d+)|(\D+)/g, function (_:any, $1:any, $2:any) { bx.push([$1 || Infinity, $2 || ""]) });
-         
-            while (ax.length && bx.length) {
-              const an = ax.shift();
-              const bn = bx.shift();
-              const nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
-              if (nn) return nn;
+
+            for (let index = 0; ax.length && bx.length ; index++) {
+                const an = ax.shift();
+                const bn = bx.shift();
+                const nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
+                if (nn) return nn;
             }
+           
             return ax.length - bx.length;
          }
         const data = this.DataTable
@@ -404,6 +406,9 @@ class RdataTB  {
         this.DataSorted = data
         this.i = 0
         this.RenderToHTML()
+        const t1:number = performance.now()    
+        this.timeSort = Math.round((t1 - t0)/1000*10000)/10000
+        console.log("" + this.timeSort+ " milliseconds.")
         return this.DataSorted
     }
 
