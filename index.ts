@@ -13,7 +13,8 @@ interface IOptions{
     ShowSelect:boolean,
     ShowPaginate:boolean,
     SelectionNumber:Array<number>,
-    HideColumn:Array<string>
+    HideColumn:Array<string>,
+    ShowHighlight:boolean
 }
 
 
@@ -37,6 +38,7 @@ class RdataTB  {
     SelectionNumber: number[] = [5,10,20,50]
     SelectElementString: string = '';
     timeSort!: number;
+    ShowHighlight: boolean = false;
 
     /**
      * 
@@ -44,7 +46,7 @@ class RdataTB  {
      * @param Options Options
      * 
      */
-    constructor(IdTable:string,Options:IOptions = {RenderJSON:null,ShowSearch:true,ShowSelect:true,ShowPaginate:true,SelectionNumber:[5,10,20,50],HideColumn:[]}) {
+    constructor(IdTable:string,Options:IOptions = {RenderJSON:null,ShowSearch:true,ShowSelect:true,ShowPaginate:true,SelectionNumber:[5,10,20,50],HideColumn:[],ShowHighlight:false}) {
         this.TableElement = document.getElementById(IdTable)
         this.StyleS();
         this.ConvertToJson()
@@ -62,9 +64,14 @@ class RdataTB  {
                 document.getElementById('my-select')?.remove()
             }
         }
-        if (Options.ShowPaginate != true) {
-            if (Options.ShowPaginate != null || Options.ShowPaginate === false){
-                document.getElementById('pgN')?.remove()
+        if (Options.ShowSelect != true) {
+            if (Options.ShowSelect != null || Options.ShowSelect === false){
+                document.getElementById('my-select')?.remove()
+            }
+        }
+        if (Options.ShowHighlight != false) {
+            if (Options.ShowHighlight != null || Options.ShowHighlight === true){
+                this.ShowHighlight = true
             }
         }
         if (Options.ShowSearch != true) {
@@ -454,17 +461,19 @@ class RdataTB  {
      * 
      */
     public highlight(text:string):void{
-    const getbody:any = this.TableElement?.getElementsByTagName('tbody');
-    for (let row = 0; row < getbody[0].rows.length; row++) {
-        for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
-             let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
-             const index = innerHTML.indexOf(text);
-             if (index >= 0) {  
-              innerHTML = innerHTML.substring(0,index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length) ;
-              getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
-              getbody[0].rows[row].cells[cellsIndex].classList.add(`${this.HeaderDataTable[cellsIndex].replace(/\s/g,'_')}__row`);
-             }
-           }
+        if (this.ShowHighlight) {
+            const getbody:any = this.TableElement?.getElementsByTagName('tbody');
+            for (let row = 0; row < getbody[0].rows.length; row++) {
+                for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
+                     let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
+                     const index = innerHTML.indexOf(text);
+                     if (index >= 0) {  
+                      innerHTML = innerHTML.substring(0,index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length) ;
+                      getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
+                      getbody[0].rows[row].cells[cellsIndex].classList.add(`${this.HeaderDataTable[cellsIndex].replace(/\s/g,'_')}__row`);
+                     }
+                   }
+                }
         }
     }
 

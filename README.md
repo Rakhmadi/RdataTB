@@ -15,11 +15,12 @@ You can enter options in the second parameter
 <script>
     let x = new RdataTB('youTableid',{
 		RenderJSON:[], // Convert Json to Table html 
-		ShowSearch:true,
-		ShowSelect:true,
-		ShowPaginate:true,
+		ShowSearch:true // show search field,
+		ShowSelect:true // show show select,
+		ShowPaginate:true // show paginate ,
 		SelectionNumber:[5,10,20,50], //Change Option in Select
 		HideColumn:[] // Hide column
+		ShowHighlight:false // show Highlight if search
 	});
 </script>
 ```
@@ -50,7 +51,7 @@ You can enter options in the second parameter
 | ```DataTableRaw``` | Get table data in json format |
 |``` HeaderDataTable ```|Get all column name|
 |``` RowDataTable```|Get data in row table|
-|```DataToRender```|Get the data displayed in the table|
+|``` DataToRender```|Get the data displayed in the table|
 
 #### Methods 
 |Name Methods  | Descriptions|
@@ -59,5 +60,5 @@ You can enter options in the second parameter
 |``` DownloadJSON('FileName');```|Download table in Json format "default filename is Export"|
 |``` sort('columnName'); ```|Sort table by column asc and desc|
 |```getNextItem();```|Get next page data|
-|```getPrevItem();```|Get previous page data|
+|``` getPrevItem();```|Get previous page data|
 

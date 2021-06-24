@@ -14,8 +14,7 @@ class RdataTB {
      * @param Options Options
      *
      */
-    constructor(IdTable, Options = { RenderJSON: null, ShowSearch: true, ShowSelect: true, ShowPaginate: true, SelectionNumber: [5, 10, 20, 50], HideColumn: [] }) {
-        var _a, _b, _c;
+    constructor(IdTable, Options = { RenderJSON: null, ShowSearch: true, ShowSelect: true, ShowPaginate: true, SelectionNumber: [5, 10, 20, 50], HideColumn: [], ShowHighlight: false }) {
         this.HeaderDataTable = []; // header table to array
         this.RowDataTable = []; // get Table to json
         this.DataTable = [];
@@ -32,6 +31,7 @@ class RdataTB {
         this.ListHiding = [];
         this.SelectionNumber = [5, 10, 20, 50];
         this.SelectElementString = '';
+        this.ShowHighlight = false;
         this.TableElement = document.getElementById(IdTable);
         this.StyleS();
         this.ConvertToJson();
@@ -46,17 +46,22 @@ class RdataTB {
         }
         if (Options.ShowSelect != true) {
             if (Options.ShowSelect != null || Options.ShowSelect === false) {
-                (_a = document.getElementById('my-select')) === null || _a === void 0 ? void 0 : _a.remove();
+                document.getElementById('my-select')?.remove();
             }
         }
-        if (Options.ShowPaginate != true) {
-            if (Options.ShowPaginate != null || Options.ShowPaginate === false) {
-                (_b = document.getElementById('pgN')) === null || _b === void 0 ? void 0 : _b.remove();
+        if (Options.ShowSelect != true) {
+            if (Options.ShowSelect != null || Options.ShowSelect === false) {
+                document.getElementById('my-select')?.remove();
+            }
+        }
+        if (Options.ShowHighlight != false) {
+            if (Options.ShowHighlight != null || Options.ShowHighlight === true) {
+                this.ShowHighlight = true;
             }
         }
         if (Options.ShowSearch != true) {
             if (Options.ShowSearch != null || Options.ShowSearch === false) {
-                (_c = document.getElementById('SearchControl')) === null || _c === void 0 ? void 0 : _c.remove();
+                document.getElementById('SearchControl')?.remove();
             }
         }
         if (Options.HideColumn != null) {
@@ -214,9 +219,8 @@ class RdataTB {
         }
     }
     search() {
-        var _a;
         this.DataSearch = this.DataTable;
-        (_a = document.getElementById('SearchControl')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', (evt) => {
+        document.getElementById('SearchControl')?.addEventListener('input', (evt) => {
             this.searchValue = evt.target.value;
             this.DataTable = this.DataSearch.filter((element) => {
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
@@ -233,14 +237,13 @@ class RdataTB {
         });
     }
     ConvertToJson() {
-        var _a, _b, _c;
         //get Header
-        const getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
+        const getHead = this.TableElement?.getElementsByTagName('th');
         for (let v = 0; v < getHead.length; v++) {
-            (_b = this.HeaderDataTable) === null || _b === void 0 ? void 0 : _b.push(getHead[v].textContent);
+            this.HeaderDataTable?.push(getHead[v].textContent);
         }
         //get row data
-        const getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
+        const getbody = this.TableElement?.getElementsByTagName('tbody');
         for (let row = 0; row < ((getbody[0] === undefined) ? 0 : getbody[0].rows.length); row++) {
             const cellsD = [];
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
@@ -413,16 +416,17 @@ class RdataTB {
      *
      */
     highlight(text) {
-        var _a;
-        const getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
-        for (let row = 0; row < getbody[0].rows.length; row++) {
-            for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
-                let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
-                const index = innerHTML.indexOf(text);
-                if (index >= 0) {
-                    innerHTML = innerHTML.substring(0, index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index, index + text.length) + "</span>" + innerHTML.substring(index + text.length);
-                    getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
-                    getbody[0].rows[row].cells[cellsIndex].classList.add(`${this.HeaderDataTable[cellsIndex].replace(/\s/g, '_')}__row`);
+        if (this.ShowHighlight) {
+            const getbody = this.TableElement?.getElementsByTagName('tbody');
+            for (let row = 0; row < getbody[0].rows.length; row++) {
+                for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
+                    let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
+                    const index = innerHTML.indexOf(text);
+                    if (index >= 0) {
+                        innerHTML = innerHTML.substring(0, index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index, index + text.length) + "</span>" + innerHTML.substring(index + text.length);
+                        getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
+                        getbody[0].rows[row].cells[cellsIndex].classList.add(`${this.HeaderDataTable[cellsIndex].replace(/\s/g, '_')}__row`);
+                    }
                 }
             }
         }
