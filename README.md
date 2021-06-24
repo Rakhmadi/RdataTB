@@ -3,7 +3,7 @@ simple vanilla javascript datatable
 #### Setup
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/Rakhmadi/RdataTB@main/dist/index.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Rakhmadi/RdataTB@master/dist/index.js"></script>
 
 <script>
     let x = new RdataTB('youTableid');
