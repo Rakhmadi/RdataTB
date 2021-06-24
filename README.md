@@ -15,11 +15,11 @@ You can enter options in the second parameter
 <script>
     let x = new RdataTB('youTableid',{
 		RenderJSON:[], // Convert Json to Table html 
-		ShowSearch:true // show search field,
-		ShowSelect:true // show show select,
-		ShowPaginate:true // show paginate ,
+		ShowSearch:true, // show search field,
+		ShowSelect:true, // show show select,
+		ShowPaginate:true, // show paginate ,
 		SelectionNumber:[5,10,20,50], //Change Option in Select
-		HideColumn:[] // Hide column
+		HideColumn:[], // Hide column
 		ShowHighlight:false // show Highlight if search
 	});
 </script>
