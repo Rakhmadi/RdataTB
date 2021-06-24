@@ -194,18 +194,6 @@ class RdataTB  {
         }
     } 
 
-    public getNextItem():void{
-        this.nextItem()
-        this.highlight(this.searchValue);
-        this.DoHide()
-    }
-
-    public getPrevItem():void{
-        this.prevItem()
-        this.highlight(this.searchValue);
-        this.DoHide()
-    }
-
     public nextItem():void {
         this.i = this.i + 1; // increase i by one
         this.i = this.i % this.Divide().length; // if we've gone too high, start from `0` again
@@ -337,11 +325,12 @@ class RdataTB  {
             for (let ___row = 0; ___row < SlecTloaf.length ; ___row++) {
                 let ToCell:string = ''
                 for (let ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
-                    ToCell += `<td>${SlecTloaf[___row][this.HeaderDataTable[___cell]]}</td>\n`
+                    ToCell += `<td class="${this.HeaderDataTable[___cell]}__row">${SlecTloaf[___row][this.HeaderDataTable[___cell]]}</td>\n`
                 }
                 row +=`<tr>${ToCell}</tr>\n` 
             }
             this.DataToRender = SlecTloaf
+            
         }
 
         // ====
