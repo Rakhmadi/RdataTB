@@ -59,6 +59,6 @@ You can enter options in the second parameter
 | ``` DownloadCSV('FileName'); ``` | Download table in csv format "default filename is Export" |
 |``` DownloadJSON('FileName');```|Download table in Json format "default filename is Export"|
 |``` sort('columnName'); ```|Sort table by column asc and desc|
-|```getNextItem();```|Get next page data|
-|``` getPrevItem();```|Get previous page data|
+|```nextItem();```|Get next page data|
+|``` prevItem();```|Get previous page data|
 

@@ -14,7 +14,13 @@ interface IOptions{
     ShowPaginate:boolean,
     SelectionNumber:Array<number>,
     HideColumn:Array<string>,
-    ShowHighlight:boolean
+    ShowHighlight:boolean,
+    fixedTable:boolean
+}
+
+interface IListtyped{
+    HeaderIndex:number,
+    dateVal:boolean
 }
 
 
@@ -39,6 +45,7 @@ class RdataTB  {
     SelectElementString: string = '';
     timeSort!: number;
     ShowHighlight: boolean = false;
+    listTypeDate: Array<IListtyped> = [];
 
     /**
      * 
@@ -46,8 +53,18 @@ class RdataTB  {
      * @param Options Options
      * 
      */
-    constructor(IdTable:string,Options:IOptions = {RenderJSON:null,ShowSearch:true,ShowSelect:true,ShowPaginate:true,SelectionNumber:[5,10,20,50],HideColumn:[],ShowHighlight:false}) {
+    constructor(IdTable:string,Options:IOptions = {RenderJSON:null,
+        ShowSearch:true,
+        ShowSelect:true,
+        ShowPaginate:true,
+        SelectionNumber:[5,10,20,50],
+        HideColumn:[],
+        ShowHighlight:false,
+        fixedTable:false}) {
         this.TableElement = document.getElementById(IdTable)
+
+        this.detectTyped()
+        
         this.StyleS();
         this.ConvertToJson()
         this.paginateRender()
@@ -74,6 +91,15 @@ class RdataTB  {
                 this.ShowHighlight = true
             }
         }
+        if (Options.fixedTable != false) {
+            if (Options.fixedTable != null || Options.fixedTable === true){
+                this.TableElement?.classList.add("table_layout_fixed")
+            }else{
+                this.TableElement?.classList.remove("table_layout_fixed")
+            }
+        }else{
+            this.TableElement?.classList.add("table_layout_fixed")
+        }
         if (Options.ShowSearch != true) {
             if (Options.ShowSearch != null || Options.ShowSearch === false){
                 document.getElementById('SearchControl')?.remove()
@@ -89,13 +115,27 @@ class RdataTB  {
             this.SelectionNumber = Options.SelectionNumber
             this.ChangeSelect()
         }
+
+        
   
+    }
+    detectTyped() {
+        const getHead:Array<any> | any = this.TableElement?.getElementsByTagName('th');
+        
+        for (let z = 0; z < getHead.length; z++) {
+            if (getHead[z]!.attributes['type-date']) {
+                this.listTypeDate.push({
+                    HeaderIndex:z,
+                    dateVal:true
+                });
+            } 
+        }
     }
     StyleS() {
         const style = document.createElement('style');
         style.type = 'text/css';
         style.innerHTML = `
-        table { 
+        .table_layout_fixed { 
             table-layout:fixed;
         }
         table > thead{
@@ -214,10 +254,6 @@ class RdataTB  {
 
     public paginateRender():void{
         let innerP:any = ''
-        for (let z = 0; z < Math.floor((this.DataTable === undefined)?0:this.DataTable.length/this.PageSize); z++) {
-            innerP += `<a id="P__X__${z+1}" style="cursor:pointer;">${z+1}</a>\n`
-        }
-
         const k = ` <div class="pagination" id="pgN">
         <a id="x__PREV__X" style="cursor:pointer;user-select: none;">&laquo;</a>
            <div id="PF">
@@ -372,6 +408,7 @@ class RdataTB  {
      */
     public sort(column:string):Array<any>{
         const t0:number = performance.now()
+
         function naturalCompare(a:any, b:any) {
             const ax:Array<any> = []
             const bx:Array<any> = []
@@ -387,24 +424,43 @@ class RdataTB  {
            
             return ax.length - bx.length;
          }
+
+         let IndexHead:number = this.HeaderDataTable.indexOf(column)
+         let listDated = this.listTypeDate.find(x=>x.HeaderIndex === IndexHead)
+         let isDate:boolean = listDated?.HeaderIndex === IndexHead
+         
+         
+
         const data = this.DataTable
+
         if (this.Assc) {
             this.Assc = !this.Assc
-            data.sort((a:any,b:any)=>{
-                return naturalCompare(a[column], b[column])
-            })
+            if (!isDate) {
+                data.sort((a,b)=>{
+                    return naturalCompare(a[column], b[column])
+                })
+            }else{
+                data.sort((a,b)=>{
+                    return Date.parse(a[column])- Date.parse(b[column])
+                })
+            }
         } else {
             this.Assc = !this.Assc
-            data.sort((a:any,b:any)=>{
-                return naturalCompare(b[column], a[column])
-            })
+            if (!isDate) {
+                data.sort((a,b)=>{
+                    return naturalCompare(b[column], a[column])
+                })
+            }else{
+                data.sort((a,b)=>{
+                    return Date.parse(b[column])- Date.parse(a[column])
+                })
+            }
         }
         this.DataSorted = data
         this.i = 0
         this.RenderToHTML()
         const t1:number = performance.now()    
         this.timeSort = Math.round((t1 - t0)/1000*10000)/10000
-        console.log("" + this.timeSort+ " milliseconds.")
         return this.DataSorted
     }
 
@@ -528,9 +584,11 @@ class RdataTB  {
             }
         }
         for (let V = 0; V < IndexTrue.length; V++) {
+            //show if array true
             this.ShowCol(GetHeadArr[IndexTrue[V]])
         }
         for (let F = 0; F < IndexFalse.length; F++) {
+            // hide if array false
             this.HideCol(GetHeadArr[IndexFalse[F]])
         }
     }
