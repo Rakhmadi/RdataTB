@@ -727,13 +727,17 @@
 				  </table>
 			</div>
 		</div>
+		<button onclick="x.DownloadCSV()" class="ms-3 border-0 btn btn-primary shadow-none">Download CSV</button>
+		<button onclick="x.DownloadJSON()" class="btn border-0 btn-primary shadow-none">Download JSON</button>
 	</div>
   <script>
 	window.parent.document.body.style.zoom = 0.8; // zoom
+
     let x = new RdataTB('myTable',{
-		HideColumn:["City"],
+		HideColumn:["City"], // Hide 
 		fixedTable:true // fixed table
-		});
+	});
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
  
