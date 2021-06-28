@@ -23,6 +23,7 @@ class RdataTB {
         ShowHighlight: false,
         fixedTable: false,
         sortAnimate: true }) {
+        var _a, _b, _c, _d, _e, _f;
         this.HeaderDataTable = []; // header table to array
         this.RowDataTable = []; // get Table to json
         this.DataTable = [];
@@ -56,12 +57,12 @@ class RdataTB {
         }
         if (Options.ShowSelect != true) {
             if (Options.ShowSelect != null || Options.ShowSelect === false) {
-                document.getElementById('my-select')?.remove();
+                (_a = document.getElementById('my-select')) === null || _a === void 0 ? void 0 : _a.remove();
             }
         }
         if (Options.ShowSelect != true) {
             if (Options.ShowSelect != null || Options.ShowSelect === false) {
-                document.getElementById('my-select')?.remove();
+                (_b = document.getElementById('my-select')) === null || _b === void 0 ? void 0 : _b.remove();
             }
         }
         if (Options.ShowHighlight != false) {
@@ -71,18 +72,18 @@ class RdataTB {
         }
         if (Options.fixedTable != false) {
             if (Options.fixedTable != null || Options.fixedTable === true) {
-                this.TableElement?.classList.add("table_layout_fixed");
+                (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.classList.add("table_layout_fixed");
             }
             else {
-                this.TableElement?.classList.remove("table_layout_fixed");
+                (_d = this.TableElement) === null || _d === void 0 ? void 0 : _d.classList.remove("table_layout_fixed");
             }
         }
         else {
-            this.TableElement?.classList.add("table_layout_fixed");
+            (_e = this.TableElement) === null || _e === void 0 ? void 0 : _e.classList.add("table_layout_fixed");
         }
         if (Options.ShowSearch != true) {
             if (Options.ShowSearch != null || Options.ShowSearch === false) {
-                document.getElementById('SearchControl')?.remove();
+                (_f = document.getElementById('SearchControl')) === null || _f === void 0 ? void 0 : _f.remove();
             }
         }
         if (Options.HideColumn != null) {
@@ -96,7 +97,8 @@ class RdataTB {
         this.totalPages = this.Divide().length;
     }
     detectTyped() {
-        const getHead = this.TableElement?.getElementsByTagName('th');
+        var _a;
+        const getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
         for (let z = 0; z < getHead.length; z++) {
             if (getHead[z].attributes['type-date']) {
                 this.listTypeDate.push({
@@ -222,8 +224,9 @@ class RdataTB {
         }
     }
     search() {
+        var _a;
         this.DataSearch = this.DataTable;
-        document.getElementById('SearchControl')?.addEventListener('input', (evt) => {
+        (_a = document.getElementById('SearchControl')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', (evt) => {
             this.searchValue = evt.target.value;
             this.DataTable = this.DataSearch.filter((element) => {
                 for (let index = 0; index < this.HeaderDataTable.length; index++) {
@@ -240,13 +243,14 @@ class RdataTB {
         });
     }
     ConvertToJson() {
+        var _a, _b, _c;
         //get Header
-        const getHead = this.TableElement?.getElementsByTagName('th');
+        const getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
         for (let v = 0; v < getHead.length; v++) {
-            this.HeaderDataTable?.push(getHead[v].textContent);
+            (_b = this.HeaderDataTable) === null || _b === void 0 ? void 0 : _b.push(getHead[v].textContent);
         }
         //get row data
-        const getbody = this.TableElement?.getElementsByTagName('tbody');
+        const getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
         for (let row = 0; row < ((getbody[0] === undefined) ? 0 : getbody[0].rows.length); row++) {
             const cellsD = [];
             for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
@@ -362,7 +366,7 @@ class RdataTB {
         }
         const IndexHead = this.HeaderDataTable.indexOf(column);
         const listDated = this.listTypeDate.find(x => x.HeaderIndex === IndexHead);
-        const isDate = listDated?.HeaderIndex === IndexHead;
+        const isDate = (listDated === null || listDated === void 0 ? void 0 : listDated.HeaderIndex) === IndexHead;
         const data = this.DataTable;
         if (this.Assc) {
             this.Assc = !this.Assc;
@@ -437,8 +441,9 @@ class RdataTB {
      *
      */
     highlight(text) {
+        var _a;
         if (this.ShowHighlight) {
-            const getbody = this.TableElement?.getElementsByTagName('tbody');
+            const getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
             for (let row = 0; row < getbody[0].rows.length; row++) {
                 for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
                     let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
