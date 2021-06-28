@@ -21,14 +21,14 @@ class RdataTB {
         SelectionNumber: [5, 10, 20, 50],
         HideColumn: [],
         ShowHighlight: false,
-        fixedTable: false }) {
+        fixedTable: false,
+        sortAnimate: true }) {
         this.HeaderDataTable = []; // header table to array
         this.RowDataTable = []; // get Table to json
         this.DataTable = [];
         this.DataSorted = [];
         this.DataToRender = [];
         this.PageSize = 5;
-        this.NumSelectedPage = 0;
         this.Assc = false;
         this.DataSearch = [];
         this.i = 0;
@@ -40,6 +40,7 @@ class RdataTB {
         this.SelectElementString = '';
         this.ShowHighlight = false;
         this.listTypeDate = [];
+        this.PageNow = 1;
         this.TableElement = document.getElementById(IdTable);
         this.detectTyped();
         this.StyleS();
@@ -92,6 +93,7 @@ class RdataTB {
             this.SelectionNumber = Options.SelectionNumber;
             this.ChangeSelect();
         }
+        this.totalPages = this.Divide().length;
     }
     detectTyped() {
         const getHead = this.TableElement?.getElementsByTagName('th');
@@ -106,7 +108,6 @@ class RdataTB {
     }
     StyleS() {
         const style = document.createElement('style');
-        style.type = 'text/css';
         style.innerHTML = `
         .table_layout_fixed { 
             table-layout:fixed;
@@ -117,7 +118,6 @@ class RdataTB {
             -ms-user-select: none;      
             user-select: none;
         }
-        /* Pagination links */
         .pagination a {
           color: black;
           float: left;
@@ -126,29 +126,20 @@ class RdataTB {
           transition: background-color .3s;
           font-size:12px;
         }
-        
-        /* Style the active/current link */
-        .pagination a.active {
-          background-color: dodgerblue;
-          color: white;
-        }
         .tablesorter-header-asc::after {
             content: '\\2191';
             top: calc(50% - 0.75em);
             float: right;
         }
-        
         .tablesorter-header-desc::after {
             content: '\\2193';
             top: calc(50% - 0.75em);
             float: right;
         }
-        /* Add a grey background color on mouse-over */
         .pagination a:hover:not(.active) {background-color: #ddd;}
         .blink_me {
             animation: blinker 1s;
           }
-          
           @keyframes blinker {
             50% {
               opacity: .5;
@@ -206,25 +197,19 @@ class RdataTB {
         this.i = this.i % this.Divide().length; // if we've gone too high, start from `0` again
         this.COntrolDataArr = this.Divide()[this.i]; // give us back the item of where we are now
         this.RenderToHTML(this.COntrolDataArr);
+        this.PageNow = this.i + 1;
     }
     prevItem() {
         if (this.i === 0) { // i would become 0
             this.i = this.Divide().length; // so put it at the other end of the array
         }
         this.i = this.i - 1; // decrease by one
+        this.PageNow = this.i + 1;
         this.COntrolDataArr = this.Divide()[this.i]; // give us back the item of where we are now
         this.RenderToHTML(this.COntrolDataArr);
     }
     paginateRender() {
-        let innerP = '';
-        const k = ` <div class="pagination" id="pgN">
-        <a id="x__PREV__X" style="cursor:pointer;user-select: none;">&laquo;</a>
-           <div id="PF">
-                ${innerP}
-           </div>
-        <a id="x__NEXT__X" style="cursor:pointer;user-select: none;">&raquo;</a>
-        </div>
-        `;
+        const k = ` <div class="pagination" id="pgN"><a id="x__PREV__X" style="cursor:pointer;user-select: none;">&laquo;</a><div id="PF"></div><a id="x__NEXT__X" style="cursor:pointer;user-select: none;">&raquo;</a></div>`;
         const span = document.createElement('span');
         span.innerHTML = k;
         span.className = 'asterisk';
@@ -293,8 +278,8 @@ class RdataTB {
         this.TableElement.innerHTML = '';
         // check if is sorted
         const CheckIFSorted = (this.DataSorted === null || this.DataSorted === [] || this.DataSorted === undefined) ?
-            this.Divide()[this.NumSelectedPage]
-            : this.Divide()[this.NumSelectedPage];
+            this.Divide()[0]
+            : this.Divide()[0];
         this.DataToRender = CheckIFSorted;
         // HeaderDataTable To Element
         let header = '';
@@ -343,9 +328,11 @@ class RdataTB {
                     document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.add('tablesorter-header-asc');
                 }
                 //animate
-                const s = document.getElementsByClassName(`${this.HeaderDataTable[n]}__row`);
-                for (let NN = 0; NN < s.length; NN++) {
-                    setTimeout(() => s[NN].classList.add('blink_me'), 21 * NN);
+                if (this.Options.sortAnimate || !undefined) {
+                    const s = document.getElementsByClassName(`${this.HeaderDataTable[n]}__row`);
+                    for (let NN = 0; NN < s.length; NN++) {
+                        setTimeout(() => s[NN].classList.add('blink_me'), 21 * NN);
+                    }
                 }
             };
         }
@@ -373,9 +360,9 @@ class RdataTB {
             }
             return ax.length - bx.length;
         }
-        let IndexHead = this.HeaderDataTable.indexOf(column);
-        let listDated = this.listTypeDate.find(x => x.HeaderIndex === IndexHead);
-        let isDate = listDated?.HeaderIndex === IndexHead;
+        const IndexHead = this.HeaderDataTable.indexOf(column);
+        const listDated = this.listTypeDate.find(x => x.HeaderIndex === IndexHead);
+        const isDate = listDated?.HeaderIndex === IndexHead;
         const data = this.DataTable;
         if (this.Assc) {
             this.Assc = !this.Assc;
@@ -522,11 +509,9 @@ class RdataTB {
             }
         }
         for (let V = 0; V < IndexTrue.length; V++) {
-            //show if array true
             this.ShowCol(GetHeadArr[IndexTrue[V]]);
         }
         for (let F = 0; F < IndexFalse.length; F++) {
-            // hide if array false
             this.HideCol(GetHeadArr[IndexFalse[F]]);
         }
     }

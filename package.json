@@ -27,5 +27,8 @@
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
     "eslint": "^7.20.0"
+  },
+  "dependencies": {
+    "@node-minify/core": "^6.2.0"
   }
 }

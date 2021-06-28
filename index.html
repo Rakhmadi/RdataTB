@@ -9,8 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 </head>
 <body>
-	<div class="container">
-    <div class="card m-3 p-3">
+	<div class="container-fluid">
+    <div class="card m-3 p-4 border-0  shadow-lg" style="border-radius: 1rem !important;">
 			<div class="table-responsive">
 				<table class="table table-bordered" id="myTable" border="1">
 					<thead>
@@ -734,7 +734,7 @@
 	window.parent.document.body.style.zoom = 0.8; // zoom
 
     let x = new RdataTB('myTable',{
-		HideColumn:["City"], // Hide 
+		HideColumn:["City"], // Hide column
 		fixedTable:true // fixed table
 	});
 
