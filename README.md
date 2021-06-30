@@ -34,7 +34,8 @@ You can enter options in the second parameter
 		<tr>
 			<th>Head 1</th>
 			<th>Head 2</th>
-			<th>Head 3</th>
+			<th>Head 3</th> 
+			 <!-- If column contain type date add attribut "type-date" example = <th type-date >Head 3</th>  -->
 		</tr>
 	</thead>
 	<tbody>
