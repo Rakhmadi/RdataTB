@@ -10,6 +10,10 @@
 </head>
 <body>
 	<div class="container-fluid">
+	<div class="m-3">
+		<h1 style="color: #262647 !important;">RdataTB</h1>
+		<h4 style="color: #262647 !important;">Simple vanilla datatable plugin</h4>
+	</div>
     <div class="card m-3 p-4 border-0  shadow-lg" style="border-radius: 1rem !important;">
 			<div class="table-responsive">
 				<table class="table table-bordered" id="myTable" border="1">
@@ -727,13 +731,15 @@
 				  </table>
 			</div>
 		</div>
-		<button onclick="x.DownloadCSV()" class="ms-3 border-0 btn btn-primary shadow-none">Download CSV</button>
-		<button onclick="x.DownloadJSON()" class="btn border-0 btn-primary shadow-none">Download JSON</button>
+		<button onclick="x.DownloadCSV()" class="ms-3 border-0 btn btn-primary shadow-none" style="background-color: #262647 !important;">Download CSV</button>
+		<button onclick="x.DownloadJSON()" class="btn border-0 btn-primary shadow-none" style="background-color: #262647 !important;">Download JSON</button>
+		<a style="background-color: #262647 !important;" target="_blank" href="https://github.com/Rakhmadi/RdataTB#readme" class="ms-3 btn border-0 btn-primary shadow-none">Docs</a>
+		<p class="mt-5 ms-3">RdataTb by Rakhmadi - license MIT</p>
 	</div>
   <script>
 	window.parent.document.body.style.zoom = 0.8; // zoom
 
-    let x = new RdataTB('myTable',{
+	let x = new RdataTB('myTable',{
 		HideColumn:["City"], // Hide column
 		fixedTable:true // fixed table
 	});
