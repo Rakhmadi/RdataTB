@@ -164,7 +164,7 @@ class RdataTB {
         <table id="C" border="0" style="width:100%;margin-bottom:12px;">
         <tr>
           <td style="width:100%;">
-             <select id="my-select" class="form-select" style="float:left;width:99px!important;margin-right:10px;">
+             <select id="my-select" class="form-select shadow-none" style="float:left;width:99px!important;margin-right:10px;">
              <option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="50">50</option>
              </select>
              <input id="SearchControl" class="form-control shadow-none" placeholder="Search" type="text" style="width:30%;margin-left:10px">
