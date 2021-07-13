@@ -408,6 +408,8 @@ class RdataTB {
      */
     DownloadCSV(filename = 'Export') {
         let str = '';
+        let hed = this.HeaderDataTable.toString();
+        str = hed + '\r\n';
         for (let i = 0; i < this.DataTable.length; i++) {
             let line = '';
             for (const index in this.DataTable[i]) {
