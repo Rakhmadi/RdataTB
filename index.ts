@@ -25,7 +25,7 @@ interface IListtyped{
 }
 
 
-class RdataTB  {
+export default class RdataTB  {
     TableElement!: HTMLElement | null; // Element Table ById
     HeaderDataTable:Array<number | string | any> = [] ; // header table to array
     RowDataTable:Array<any> = [] // get Table to json

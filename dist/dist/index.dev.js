@@ -142,7 +142,7 @@ function () {
     key: "StyleS",
     value: function StyleS() {
       var style = document.createElement('style');
-      style.innerHTML = "\n        .table_layout_fixed { \n            table-layout:fixed;\n        }\n        table > thead{\n            -webkit-user-select: none;  \n            -moz-user-select: none;    \n            -ms-user-select: none;      \n            user-select: none;\n        }\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        .pagination a:hover:not(.active) {background-color: #ddd;}\n        .blink_me {\n            animation: blinker 1s;\n          }\n          @keyframes blinker {\n            50% {\n              opacity: .5;\n            }\n          } \n          ";
+      style.innerHTML = "\n        .table_layout_fixed { \n            table-layout:fixed;\n        }\n        table > thead{\n            -webkit-user-select: none;  \n            -moz-user-select: none;    \n            -ms-user-select: none;      \n            user-select: none;\n        }\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        tbody tr:nth-child(even) {\n            background-color: #f00;\n          }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        .pagination a:hover:not(.active) {background-color: #ddd;}\n        .blink_me {\n            animation: blinker 1s;\n          }\n          @keyframes blinker {\n            50% {\n              opacity: .5;\n            }\n          } \n          ";
       document.getElementsByTagName('head')[0].appendChild(style);
     }
   }, {
@@ -163,7 +163,7 @@ function () {
       var _this = this;
 
       var span1 = document.createElement('span');
-      span1.innerHTML = "\n        <table id=\"C\" border=\"0\" style=\"width:100%;margin-bottom:12px;\">\n        <tr>\n          <td style=\"width:100%;\">\n             <select id=\"my-select\" class=\"form-select\" style=\"float:left;width:99px!important;margin-right:10px;\">\n             <option value=\"5\">5</option><option value=\"10\">10</option><option value=\"20\">20</option><option value=\"50\">50</option>\n             </select>\n             <input id=\"SearchControl\" class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" style=\"width:30%;margin-left:10px\">\n          </td>\n        </tr>\n      </table>\n        ";
+      span1.innerHTML = "\n        <table id=\"C\" border=\"0\" style=\"width:100%;margin-bottom:12px;\">\n        <tr>\n          <td style=\"width:100%;\">\n             <select id=\"my-select\" class=\"form-select shadow-none\" style=\"float:left;width:99px!important;margin-right:10px;\">\n             <option value=\"5\">5</option><option value=\"10\">10</option><option value=\"20\">20</option><option value=\"50\">50</option>\n             </select>\n             <input id=\"SearchControl\" class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" style=\"width:30%;margin-left:10px\">\n          </td>\n        </tr>\n      </table>\n        ";
       span1.className = 'Selc';
       this.TableElement.parentNode.insertBefore(span1, this.TableElement);
       this.TableElement.style.width = '100%';
@@ -494,6 +494,8 @@ function () {
     value: function DownloadCSV() {
       var filename = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Export';
       var str = '';
+      var hed = this.HeaderDataTable.toString();
+      str = hed + '\r\n';
 
       for (var i = 0; i < this.DataTable.length; i++) {
         var line = '';

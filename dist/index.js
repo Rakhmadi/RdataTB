@@ -7,6 +7,7 @@
  *
  *
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 class RdataTB {
     /**
      *
@@ -523,3 +524,4 @@ class RdataTB {
         }
     }
 }
+exports.default = RdataTB;
