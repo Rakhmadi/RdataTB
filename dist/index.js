@@ -1,29 +1,25 @@
+
 "use strict";
-/**
- *
- *
- * By Rakhmadi (c) 2021
- * Under the MIT License.
- *
- *
- */
+var exports = {};
+
 Object.defineProperty(exports, "__esModule", { value: true });
-class RdataTB {
+var RdataTB = /** @class */ (function () {
     /**
      *
      * @param IdTable Id tabble
      * @param Options Options
      *
      */
-    constructor(IdTable, Options = { RenderJSON: null,
-        ShowSearch: true,
-        ShowSelect: true,
-        ShowPaginate: true,
-        SelectionNumber: [5, 10, 20, 50],
-        HideColumn: [],
-        ShowHighlight: false,
-        fixedTable: false,
-        sortAnimate: true }) {
+    function RdataTB(IdTable, Options) {
+        if (Options === void 0) { Options = { RenderJSON: null,
+            ShowSearch: true,
+            ShowSelect: true,
+            ShowPaginate: true,
+            SelectionNumber: [5, 10, 20, 50],
+            HideColumn: [],
+            ShowHighlight: false,
+            fixedTable: false,
+            sortAnimate: true }; }
         var _a, _b, _c, _d, _e, _f;
         this.HeaderDataTable = []; // header table to array
         this.RowDataTable = []; // get Table to json
@@ -97,10 +93,10 @@ class RdataTB {
         }
         this.totalPages = this.Divide().length;
     }
-    detectTyped() {
+    RdataTB.prototype.detectTyped = function () {
         var _a;
-        const getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
-        for (let z = 0; z < getHead.length; z++) {
+        var getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
+        for (var z = 0; z < getHead.length; z++) {
             if (getHead[z].attributes['type-date']) {
                 this.listTypeDate.push({
                     HeaderIndex: z,
@@ -108,101 +104,55 @@ class RdataTB {
                 });
             }
         }
-    }
-    StyleS() {
-        const style = document.createElement('style');
-        style.innerHTML = `
-        .table_layout_fixed { 
-            table-layout:fixed;
-        }
-        table > thead{
-            -webkit-user-select: none;  
-            -moz-user-select: none;    
-            -ms-user-select: none;      
-            user-select: none;
-        }
-        .pagination a {
-          color: black;
-          float: left;
-          padding: 8px 12px;
-          text-decoration: none;
-          transition: background-color .3s;
-          font-size:12px;
-        }
-        .tablesorter-header-asc::after {
-            content: '\\2191';
-            top: calc(50% - 0.75em);
-            float: right;
-        }
-        .tablesorter-header-desc::after {
-            content: '\\2193';
-            top: calc(50% - 0.75em);
-            float: right;
-        }
-        .pagination a:hover:not(.active) {background-color: #ddd;}
-        .blink_me {
-            animation: blinker 1s;
-          }
-          @keyframes blinker {
-            50% {
-              opacity: .5;
-            }
-          } 
-          `;
+    };
+    RdataTB.prototype.StyleS = function () {
+        var style = document.createElement('style');
+        style.innerHTML = "\n        .table_layout_fixed { \n            table-layout:fixed;\n        }\n        table > thead{\n            -webkit-user-select: none;  \n            -moz-user-select: none;    \n            -ms-user-select: none;      \n            user-select: none;\n        }\n        .pagination a {\n          color: black;\n          float: left;\n          padding: 8px 12px;\n          text-decoration: none;\n          transition: background-color .3s;\n          font-size:12px;\n        }\n        .tablesorter-header-asc::after {\n            content: '\\2191';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        .tablesorter-header-desc::after {\n            content: '\\2193';\n            top: calc(50% - 0.75em);\n            float: right;\n        }\n        .pagination a:hover:not(.active) {background-color: #ddd;}\n        .blink_me {\n            animation: blinker 1s;\n          }\n          @keyframes blinker {\n            50% {\n              opacity: .5;\n            }\n          } \n          ";
         document.getElementsByTagName('head')[0].appendChild(style);
-    }
-    ChangeSelect() {
+    };
+    RdataTB.prototype.ChangeSelect = function () {
         this.SelectElementString = '';
-        for (let x = 0; x < this.SelectionNumber.length; x++) {
-            this.SelectElementString += `<option value="${this.SelectionNumber[x]}">${this.SelectionNumber[x]}</option>`;
+        for (var x = 0; x < this.SelectionNumber.length; x++) {
+            this.SelectElementString += "<option value=\"" + this.SelectionNumber[x] + "\">" + this.SelectionNumber[x] + "</option>";
         }
         document.getElementById("my-select").innerHTML = this.SelectElementString;
         return this.SelectElementString;
-    }
-    Control() {
-        const span1 = document.createElement('span');
-        span1.innerHTML = `
-        <table id="C" border="0" style="width:100%;margin-bottom:12px;">
-        <tr>
-          <td style="width:100%;">
-             <select id="my-select" class="form-select shadow-none" style="float:left;width:99px!important;margin-right:10px;">
-             <option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="50">50</option>
-             </select>
-             <input id="SearchControl" class="form-control shadow-none" placeholder="Search" type="text" style="width:30%;margin-left:10px">
-          </td>
-        </tr>
-      </table>
-        `;
+    };
+    RdataTB.prototype.Control = function () {
+        var _this = this;
+        var span1 = document.createElement('span');
+        span1.innerHTML = "\n        <table id=\"C\" border=\"0\" style=\"width:100%;margin-bottom:12px;\">\n        <tr>\n          <td style=\"width:100%;\">\n             <select id=\"my-select\" class=\"form-select shadow-none\" style=\"float:left;width:99px!important;margin-right:10px;\">\n             <option value=\"5\">5</option><option value=\"10\">10</option><option value=\"20\">20</option><option value=\"50\">50</option>\n             </select>\n             <input id=\"SearchControl\" class=\"form-control shadow-none\" placeholder=\"Search\" type=\"text\" style=\"width:30%;margin-left:10px\">\n          </td>\n        </tr>\n      </table>\n        ";
         span1.className = 'Selc';
         this.TableElement.parentNode.insertBefore(span1, this.TableElement);
         this.TableElement.style.width = '100%';
-        const ChangeV = (params) => {
-            this.PageSize = params;
-            this.i = 0;
-            this.RenderToHTML();
+        var ChangeV = function (params) {
+            _this.PageSize = params;
+            _this.i = 0;
+            _this.RenderToHTML();
         };
-        document.getElementById('my-select').addEventListener('change', function () {
+        var selectEl = document.getElementById('my-select');
+        selectEl === null || selectEl === void 0 ? void 0 : selectEl.addEventListener('change', function () {
             ChangeV(this.value);
         });
-        document.getElementById('x__NEXT__X').onclick = () => {
-            this.nextItem();
-            this.highlight(this.searchValue);
-            this.DoHide();
+        document.getElementById('x__NEXT__X').onclick = function () {
+            _this.nextItem();
+            _this.highlight(_this.searchValue);
+            _this.DoHide();
         };
-        document.getElementById('x__PREV__X').onclick = () => {
-            this.prevItem();
-            this.highlight(this.searchValue);
-            this.DoHide();
+        document.getElementById('x__PREV__X').onclick = function () {
+            _this.prevItem();
+            _this.highlight(_this.searchValue);
+            _this.DoHide();
         };
-    }
-    nextItem() {
+    };
+    RdataTB.prototype.nextItem = function () {
         this.i = this.i + 1; // increase i by one
         this.i = this.i % this.Divide().length; // if we've gone too high, start from `0` again
         this.COntrolDataArr = this.Divide()[this.i]; // give us back the item of where we are now
         this.RenderToHTML(this.COntrolDataArr);
         this.PageNow = this.i + 1;
-    }
-    prevItem() {
+    };
+    RdataTB.prototype.prevItem = function () {
         if (this.i === 0) { // i would become 0
             this.i = this.Divide().length; // so put it at the other end of the array
         }
@@ -210,58 +160,59 @@ class RdataTB {
         this.PageNow = this.i + 1;
         this.COntrolDataArr = this.Divide()[this.i]; // give us back the item of where we are now
         this.RenderToHTML(this.COntrolDataArr);
-    }
-    paginateRender() {
-        const k = ` <div class="pagination" id="pgN"><a id="x__PREV__X" style="cursor:pointer;user-select: none;">&laquo;</a><div id="PF"></div><a id="x__NEXT__X" style="cursor:pointer;user-select: none;">&raquo;</a></div>`;
-        const span = document.createElement('span');
+    };
+    RdataTB.prototype.paginateRender = function () {
+        var k = " <div class=\"pagination\" id=\"pgN\"><a id=\"x__PREV__X\" style=\"cursor:pointer;user-select: none;\">&laquo;</a><div id=\"PF\"></div><a id=\"x__NEXT__X\" style=\"cursor:pointer;user-select: none;\">&raquo;</a></div>";
+        var span = document.createElement('span');
         span.innerHTML = k;
         span.className = 'asterisk';
         this.TableElement.parentNode.insertBefore(span, this.TableElement.nextSibling);
-    }
-    PaginateUpdate() {
+    };
+    RdataTB.prototype.PaginateUpdate = function () {
         if (document.getElementById('PF') != null) {
-            document.getElementById('PF').innerHTML = `
-            <a style="">Page ${this.i + 1} to ${this.Divide().length} of ${(this.DataTable === undefined) ? 0 : this.DataTable.length} Entries</a>`;
+            document.getElementById('PF').innerHTML = "\n            <a style=\"\">Page " + (this.i + 1) + " to " + this.Divide().length + " of " + ((this.DataTable === undefined) ? 0 : this.DataTable.length) + " Entries</a>";
         }
-    }
-    search() {
+    };
+    RdataTB.prototype.search = function () {
+        var _this = this;
         var _a;
         this.DataSearch = this.DataTable;
-        (_a = document.getElementById('SearchControl')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', (evt) => {
-            this.searchValue = evt.target.value;
-            this.DataTable = this.DataSearch.filter((element) => {
-                for (let index = 0; index < this.HeaderDataTable.length; index++) {
-                    const fg = element[this.HeaderDataTable[index]].toString().toLowerCase().includes(evt.target.value.toLowerCase());
+        (_a = document.getElementById('SearchControl')) === null || _a === void 0 ? void 0 : _a.addEventListener('input', function (evt) {
+            _this.searchValue = evt.target.value;
+            _this.DataTable = _this.DataSearch.filter(function (element) {
+                for (var index = 0; index < _this.HeaderDataTable.length; index++) {
+                    var fg = element[_this.HeaderDataTable[index]].toString().toLowerCase().includes(evt.target.value.toLowerCase());
                     if (fg) {
                         return fg;
                     }
                 }
             });
-            this.RenderToHTML();
-            this.i = 0;
-            this.PaginateUpdate();
-            this.highlight(evt.target.value);
+            _this.RenderToHTML();
+            _this.i = 0;
+            _this.PaginateUpdate();
+            _this.highlight(evt.target.value);
         });
-    }
-    ConvertToJson() {
+    };
+    RdataTB.prototype.ConvertToJson = function () {
+        var _this = this;
         var _a, _b, _c;
         //get Header
-        const getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
-        for (let v = 0; v < getHead.length; v++) {
+        var getHead = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('th');
+        for (var v = 0; v < getHead.length; v++) {
             (_b = this.HeaderDataTable) === null || _b === void 0 ? void 0 : _b.push(getHead[v].textContent);
         }
         //get row data
-        const getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
-        for (let row = 0; row < ((getbody[0] === undefined) ? 0 : getbody[0].rows.length); row++) {
-            const cellsD = [];
-            for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
+        var getbody = (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.getElementsByTagName('tbody');
+        for (var row = 0; row < ((getbody[0] === undefined) ? 0 : getbody[0].rows.length); row++) {
+            var cellsD = [];
+            for (var cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
                 cellsD.push(getbody[0].rows[row].cells[cellsIndex].innerHTML);
             }
             this.RowDataTable.push(cellsD);
         }
         // to key value Json
-        this.DataTable = this.RowDataTable.reduce((akumulasi, e) => {
-            akumulasi.push(this.HeaderDataTable.reduce((x, y, i) => {
+        this.DataTable = this.RowDataTable.reduce(function (akumulasi, e) {
+            akumulasi.push(_this.HeaderDataTable.reduce(function (x, y, i) {
                 x[y] = e[i];
                 return x;
             }, {}));
@@ -269,115 +220,124 @@ class RdataTB {
         }, []);
         this.DataTableRaw = this.DataTable;
         return this.DataTable;
-    }
-    Divide() {
-        const gh = [];
-        const h = (typeof this.PageSize === "string") ? parseInt(this.PageSize) : this.PageSize;
-        for (let i = 0; i < ((this.DataTable === undefined) ? 0 : this.DataTable.length); i += h) {
+    };
+    RdataTB.prototype.Divide = function () {
+        var gh = [];
+        var h = (typeof this.PageSize === "string") ? parseInt(this.PageSize) : this.PageSize;
+        for (var i = 0; i < ((this.DataTable === undefined) ? 0 : this.DataTable.length); i += h) {
             gh.push(this.DataTable.slice(i, i + h));
         }
         return gh;
-    }
-    RenderToHTML(SlecTloaf = null) {
+    };
+    RdataTB.prototype.RenderToHTML = function (SlecTloaf) {
+        var _this = this;
+        if (SlecTloaf === void 0) { SlecTloaf = null; }
         //clear 
         this.TableElement.innerHTML = '';
         // check if is sorted
-        const CheckIFSorted = (this.DataSorted === null || this.DataSorted === [] || this.DataSorted === undefined) ?
+        var CheckIFSorted = (this.DataSorted === null || this.DataSorted === [] || this.DataSorted === undefined) ?
             this.Divide()[0]
             : this.Divide()[0];
         this.DataToRender = CheckIFSorted;
         // HeaderDataTable To Element
-        let header = '';
-        let footer = '';
-        for (let I = 0; I < this.HeaderDataTable.length; I++) {
-            header += `<th style="cursor: pointer;" id="${this.HeaderDataTable[I]}_header" class="columns tablesorter-header">${this.HeaderDataTable[I]}</th>\n`;
-            footer += `<th style="cursor: pointer;" id="${this.HeaderDataTable[I]}_footer" class="columns tablesorter-header">${this.HeaderDataTable[I]}</th>\n`;
+        var header = '';
+        var footer = '';
+        for (var I = 0; I < this.HeaderDataTable.length; I++) {
+            header += "<th style=\"cursor: pointer;\" id=\"" + this.HeaderDataTable[I] + "_header\" class=\"columns tablesorter-header\">" + this.HeaderDataTable[I] + "</th>\n";
+            footer += "<th style=\"cursor: pointer;\" id=\"" + this.HeaderDataTable[I] + "_footer\" class=\"columns tablesorter-header\">" + this.HeaderDataTable[I] + "</th>\n";
         }
         // RowDataTable To Element
-        const ifUndefinded = (this.DataToRender === undefined) ? 0 : this.DataToRender.length;
-        let row = '';
+        var ifUndefinded = (this.DataToRender === undefined) ? 0 : this.DataToRender.length;
+        var row = '';
         if (SlecTloaf === null) {
-            for (let ___row = 0; ___row < ifUndefinded; ___row++) {
-                let ToCell = '';
-                for (let ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
-                    ToCell += `<td class="${this.HeaderDataTable[___cell]}__row">${this.DataToRender[___row][this.HeaderDataTable[___cell]]}</td>\n`;
+            for (var ___row = 0; ___row < ifUndefinded; ___row++) {
+                var ToCell = '';
+                for (var ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
+                    ToCell += "<td class=\"" + this.HeaderDataTable[___cell] + "__row\">" + this.DataToRender[___row][this.HeaderDataTable[___cell]] + "</td>\n";
                 }
-                row += `<tr>${ToCell}</tr>\n`;
+                row += "<tr>" + ToCell + "</tr>\n";
             }
         }
         else {
-            for (let ___row = 0; ___row < SlecTloaf.length; ___row++) {
-                let ToCell = '';
-                for (let ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
-                    ToCell += `<td class="${this.HeaderDataTable[___cell]}__row">${SlecTloaf[___row][this.HeaderDataTable[___cell]]}</td>\n`;
+            for (var ___row = 0; ___row < SlecTloaf.length; ___row++) {
+                var ToCell = '';
+                for (var ___cell = 0; ___cell < this.HeaderDataTable.length; ___cell++) {
+                    ToCell += "<td class=\"" + this.HeaderDataTable[___cell] + "__row\">" + SlecTloaf[___row][this.HeaderDataTable[___cell]] + "</td>\n";
                 }
-                row += `<tr>${ToCell}</tr>\n`;
+                row += "<tr>" + ToCell + "</tr>\n";
             }
             this.DataToRender = SlecTloaf;
         }
         // ====
-        const ToEl = `<thead><tr>${header}</tr></thead><tbody>${row}</tbody><tfoot>${footer}</tfoot>`;
+        var ToEl = "<thead><tr>" + header + "</tr></thead><tbody>" + row + "</tbody><tfoot>" + footer + "</tfoot>";
         this.TableElement.innerHTML = ToEl;
-        for (let n = 0; n < this.HeaderDataTable.length; n++) {
-            const cv = document.getElementById(`${this.HeaderDataTable[n]}_header`);
-            document.getElementById(`${this.HeaderDataTable[n]}_header`).style.opacity = '100%';
-            cv.onclick = () => {
-                this.sort(this.HeaderDataTable[n]);
-                document.getElementById(`${this.HeaderDataTable[n]}_header`).style.opacity = '60%';
-                if (this.Assc) {
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.remove('tablesorter-header-asc');
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.add('tablesorter-header-desc');
+        var _loop_1 = function (n) {
+            var cv = document.getElementById(this_1.HeaderDataTable[n] + "_header");
+            document.getElementById(this_1.HeaderDataTable[n] + "_header").style.opacity = '100%';
+            cv.onclick = function () {
+                _this.sort(_this.HeaderDataTable[n]);
+                document.getElementById(_this.HeaderDataTable[n] + "_header").style.opacity = '60%';
+                if (_this.Assc) {
+                    document.getElementById(_this.HeaderDataTable[n] + "_header").classList.remove('tablesorter-header-asc');
+                    document.getElementById(_this.HeaderDataTable[n] + "_header").classList.add('tablesorter-header-desc');
                 }
                 else {
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.remove('tablesorter-header-desc');
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.add('tablesorter-header-asc');
+                    document.getElementById(_this.HeaderDataTable[n] + "_header").classList.remove('tablesorter-header-desc');
+                    document.getElementById(_this.HeaderDataTable[n] + "_header").classList.add('tablesorter-header-asc');
                 }
                 //animate
-                if (this.Options.sortAnimate || !undefined) {
-                    const s = document.getElementsByClassName(`${this.HeaderDataTable[n]}__row`);
-                    for (let NN = 0; NN < s.length; NN++) {
-                        setTimeout(() => s[NN].classList.add('blink_me'), 21 * NN);
+                if (_this.Options.sortAnimate || !undefined) {
+                    var s_1 = document.getElementsByClassName(_this.HeaderDataTable[n] + "__row");
+                    var _loop_2 = function (NN) {
+                        setTimeout(function () { return s_1[NN].classList.add('blink_me'); }, 21 * NN);
+                    };
+                    for (var NN = 0; NN < s_1.length; NN++) {
+                        _loop_2(NN);
                     }
                 }
             };
+        };
+        var this_1 = this;
+        for (var n = 0; n < this.HeaderDataTable.length; n++) {
+            _loop_1(n);
         }
         this.PaginateUpdate();
         this.DoHide();
-    }
+    };
     /**
      *
      * @param column name column to sort
      * @returns show data shorted
      */
-    sort(column) {
-        const t0 = performance.now();
+    RdataTB.prototype.sort = function (column) {
+        var t0 = performance.now();
         function naturalCompare(a, b) {
-            const ax = [];
-            const bx = [];
+            var ax = [];
+            var bx = [];
             a.toString().replace(/(^\$|,)/g, '').replace(/(\d+)|(\D+)/g, function (_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]); });
             b.toString().replace(/(^\$|,)/g, '').replace(/(\d+)|(\D+)/g, function (_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]); });
-            for (let index = 0; ax.length && bx.length; index++) {
-                const an = ax.shift();
-                const bn = bx.shift();
-                const nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
+            for (var index = 0; ax.length && bx.length; index++) {
+                var an = ax.shift();
+                var bn = bx.shift();
+                var nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
                 if (nn)
                     return nn;
             }
             return ax.length - bx.length;
         }
-        const IndexHead = this.HeaderDataTable.indexOf(column);
-        const listDated = this.listTypeDate.find(x => x.HeaderIndex === IndexHead);
-        const isDate = (listDated === null || listDated === void 0 ? void 0 : listDated.HeaderIndex) === IndexHead;
-        const data = this.DataTable;
+        var IndexHead = this.HeaderDataTable.indexOf(column);
+        var listDated = this.listTypeDate.find(function (x) { return x.HeaderIndex === IndexHead; });
+        var isDate = (listDated === null || listDated === void 0 ? void 0 : listDated.HeaderIndex) === IndexHead;
+        var data = this.DataTable;
         if (this.Assc) {
             this.Assc = !this.Assc;
             if (!isDate) {
-                data.sort((a, b) => {
+                data.sort(function (a, b) {
                     return naturalCompare(a[column], b[column]);
                 });
             }
             else {
-                data.sort((a, b) => {
+                data.sort(function (a, b) {
                     return Date.parse(a[column]) - Date.parse(b[column]);
                 });
             }
@@ -385,12 +345,12 @@ class RdataTB {
         else {
             this.Assc = !this.Assc;
             if (!isDate) {
-                data.sort((a, b) => {
+                data.sort(function (a, b) {
                     return naturalCompare(b[column], a[column]);
                 });
             }
             else {
-                data.sort((a, b) => {
+                data.sort(function (a, b) {
                     return Date.parse(b[column]) - Date.parse(a[column]);
                 });
             }
@@ -398,117 +358,120 @@ class RdataTB {
         this.DataSorted = data;
         this.i = 0;
         this.RenderToHTML();
-        const t1 = performance.now();
+        var t1 = performance.now();
         this.timeSort = Math.round((t1 - t0) / 1000 * 10000) / 10000;
         return this.DataSorted;
-    }
+    };
     /**
      *
      * @param filename filename to download default is Export
      *
      */
-    DownloadCSV(filename = 'Export') {
-        let str = '';
-        let hed = this.HeaderDataTable.toString();
+    RdataTB.prototype.DownloadCSV = function (filename) {
+        if (filename === void 0) { filename = 'Export'; }
+        var str = '';
+        var hed = this.HeaderDataTable.toString();
         str = hed + '\r\n';
-        for (let i = 0; i < this.DataTable.length; i++) {
-            let line = '';
-            for (const index in this.DataTable[i]) {
+        for (var i = 0; i < this.DataTable.length; i++) {
+            var line = '';
+            for (var index in this.DataTable[i]) {
                 if (line != '')
                     line += ',';
                 line += this.DataTable[i][index];
             }
             str += line + '\r\n';
         }
-        const element = document.createElement('a');
+        var element = document.createElement('a');
         element.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(str);
         element.target = '_blank';
         element.download = filename + '.csv';
         element.click();
-    }
+    };
     /**
      *
      * @param filename filename to download default is Export
      *
      */
-    DownloadJSON(filename = 'Export') {
-        const element = document.createElement('a');
+    RdataTB.prototype.DownloadJSON = function (filename) {
+        if (filename === void 0) { filename = 'Export'; }
+        var element = document.createElement('a');
         element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTable));
         element.target = '_blank';
         element.download = filename + '.json';
         element.click();
-    }
+    };
     /**
      *
      * @param text for highlighting text in table
      *
      */
-    highlight(text) {
+    RdataTB.prototype.highlight = function (text) {
         var _a;
         if (this.ShowHighlight) {
-            const getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
-            for (let row = 0; row < getbody[0].rows.length; row++) {
-                for (let cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
-                    let innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
-                    const index = innerHTML.indexOf(text);
+            var getbody = (_a = this.TableElement) === null || _a === void 0 ? void 0 : _a.getElementsByTagName('tbody');
+            for (var row = 0; row < getbody[0].rows.length; row++) {
+                for (var cellsIndex = 0; cellsIndex < getbody[0].rows[row].cells.length; cellsIndex++) {
+                    var innerHTML = getbody[0].rows[row].cells[cellsIndex].innerHTML;
+                    var index = innerHTML.indexOf(text);
                     if (index >= 0) {
                         innerHTML = innerHTML.substring(0, index) + "<span style='background-color: yellow;'>" + innerHTML.substring(index, index + text.length) + "</span>" + innerHTML.substring(index + text.length);
                         getbody[0].rows[row].cells[cellsIndex].innerHTML = innerHTML;
-                        getbody[0].rows[row].cells[cellsIndex].classList.add(`${this.HeaderDataTable[cellsIndex].replace(/\s/g, '_')}__row`);
+                        getbody[0].rows[row].cells[cellsIndex].classList.add(this.HeaderDataTable[cellsIndex].replace(/\s/g, '_') + "__row");
                     }
                 }
             }
         }
-    }
+    };
     /**
      *
      * @param PayLoad you json data to table
      *
      */
-    JSONinit(PayLoad = []) {
+    RdataTB.prototype.JSONinit = function (PayLoad) {
+        if (PayLoad === void 0) { PayLoad = []; }
         this.HeaderDataTable = [];
-        for (const key in PayLoad[0]) {
+        for (var key in PayLoad[0]) {
             this.HeaderDataTable.push(key);
         }
         this.DataTable = PayLoad;
         this.DataSearch = PayLoad;
         this.RenderToHTML();
-    }
-    HideCol(column) {
-        const Classes = document.getElementsByClassName(`${column}__row`);
-        for (let O = 0; O < Classes.length; O++) {
+    };
+    RdataTB.prototype.HideCol = function (column) {
+        var Classes = document.getElementsByClassName(column + "__row");
+        for (var O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "none";
         }
-        if (document.getElementById(`${column}_header`)) {
-            document.getElementById(`${column}_header`).style.display = "none";
-            document.getElementById(`${column}_footer`).style.display = "none";
+        if (document.getElementById(column + "_header")) {
+            document.getElementById(column + "_header").style.display = "none";
+            document.getElementById(column + "_footer").style.display = "none";
         }
-    }
-    ShowCol(column) {
-        const Classes = document.getElementsByClassName(`${column}__row`);
-        for (let O = 0; O < Classes.length; O++) {
+    };
+    RdataTB.prototype.ShowCol = function (column) {
+        var Classes = document.getElementsByClassName(column + "__row");
+        for (var O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "";
         }
-        if (document.getElementById(`${column}_header`)) {
-            document.getElementById(`${column}_header`).style.display = "";
-            document.getElementById(`${column}_footer`).style.display = "";
+        if (document.getElementById(column + "_header")) {
+            document.getElementById(column + "_header").style.display = "";
+            document.getElementById(column + "_footer").style.display = "";
         }
-    }
-    DoHide() {
-        const GetHeadArr = this.HeaderDataTable;
-        const ListOftrutc = [];
-        for (let T = 0; T < this.HeaderDataTable.length; T++) {
+    };
+    RdataTB.prototype.DoHide = function () {
+        var GetHeadArr = this.HeaderDataTable;
+        var ListOftrutc = [];
+        for (var T = 0; T < this.HeaderDataTable.length; T++) {
             ListOftrutc.push(true);
         }
-        for (let O = 0; O < this.ListHiding.length; O++) {
-            const Index = GetHeadArr.indexOf(this.ListHiding[O]);
+        for (var O = 0; O < this.ListHiding.length; O++) {
+            var Index = GetHeadArr.indexOf(this.ListHiding[O]);
             if (Index > -1) {
                 ListOftrutc[Index] = false;
             }
         }
-        const IndexTrue = [];
-        const IndexFalse = [];
-        for (let U = 0; U < ListOftrutc.length; U++) {
+        var IndexTrue = [];
+        var IndexFalse = [];
+        for (var U = 0; U < ListOftrutc.length; U++) {
             if (ListOftrutc[U]) {
                 IndexTrue.push(U);
             }
@@ -516,12 +479,13 @@ class RdataTB {
                 IndexFalse.push(U);
             }
         }
-        for (let V = 0; V < IndexTrue.length; V++) {
+        for (var V = 0; V < IndexTrue.length; V++) {
             this.ShowCol(GetHeadArr[IndexTrue[V]]);
         }
-        for (let F = 0; F < IndexFalse.length; F++) {
+        for (var F = 0; F < IndexFalse.length; F++) {
             this.HideCol(GetHeadArr[IndexFalse[F]]);
         }
-    }
-}
+    };
+    return RdataTB;
+}());
 exports.default = RdataTB;

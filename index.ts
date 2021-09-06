@@ -6,7 +6,6 @@
  * 
  * 
  */
-
 interface IOptions{
     RenderJSON: Array<any> | null,
     ShowSearch:boolean,
@@ -24,7 +23,7 @@ interface IListtyped{
     dateVal:boolean
 }
 
-
+var exports:any ;
 export default class RdataTB  {
     TableElement!: HTMLElement | null; // Element Table ById
     HeaderDataTable:Array<number | string | any> = [] ; // header table to array
@@ -197,13 +196,14 @@ export default class RdataTB  {
         this.TableElement!.parentNode!.insertBefore(span1, this.TableElement);
         this.TableElement!.style.width = '100%'
 
-        const ChangeV = (params:number) => {
+        const ChangeV = (params:any) => {
             this.PageSize = params
             this.i = 0
             this.RenderToHTML()
         }
-        document.getElementById('my-select')!.addEventListener('change', function(){
-            ChangeV(this.value)
+        let selectEl:HTMLInputElement = <HTMLInputElement>document.getElementById('my-select')
+                        selectEl?.addEventListener('change', function(){
+                        ChangeV(this.value)
         })
         document.getElementById('x__NEXT__X')!.onclick = ()=>{
             this.nextItem()
@@ -513,7 +513,7 @@ export default class RdataTB  {
     }
     
     public HideCol(column:string):void{
-        const Classes = document.getElementsByClassName(`${column}__row`);
+        const Classes = document.getElementsByClassName(`${column}__row`)  as HTMLCollectionOf<HTMLElement>;
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "none";
         }
@@ -524,7 +524,7 @@ export default class RdataTB  {
     }
 
     public ShowCol(column:string):void{
-        const Classes = document.getElementsByClassName(`${column}__row`);
+        const Classes = document.getElementsByClassName(`${column}__row`)  as HTMLCollectionOf<HTMLElement>;
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "";
         }
@@ -567,3 +567,4 @@ export default class RdataTB  {
         }
     }
 }
+
