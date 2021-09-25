@@ -1,3 +1,4 @@
+
 /**
  * 
  * 
@@ -15,7 +16,9 @@ interface IOptions{
     HideColumn:Array<string>,
     ShowHighlight:boolean,
     fixedTable:boolean,
-    sortAnimate:boolean
+    sortAnimate:boolean,
+    ExcludeColumnExport:Array<any>
+    
 }
 
 interface IListtyped{
@@ -23,8 +26,7 @@ interface IListtyped{
     dateVal:boolean
 }
 
-var exports:any ;
-export default class RdataTB  {
+class RdataTB  {
     TableElement!: HTMLElement | null; // Element Table ById
     HeaderDataTable:Array<number | string | any> = [] ; // header table to array
     RowDataTable:Array<any> = [] // get Table to json
@@ -47,12 +49,8 @@ export default class RdataTB  {
     listTypeDate: Array<IListtyped> = [];
     PageNow: number = 1;
     totalPages: number;
-    /**
-     * 
-     * @param IdTable Id tabble 
-     * @param Options Options
-     * 
-     */
+    ExcludeColumnExport:Array<any> = [];
+
     constructor(IdTable:string,Options:IOptions = {RenderJSON:null,
         ShowSearch:true,
         ShowSelect:true,
@@ -61,7 +59,8 @@ export default class RdataTB  {
         HideColumn:[],
         ShowHighlight:false,
         fixedTable:false,
-        sortAnimate:true}) {
+        sortAnimate:true,
+        ExcludeColumnExport:[]}) {
         this.TableElement = document.getElementById(IdTable)
         this.detectTyped()
         this.StyleS();
@@ -72,6 +71,7 @@ export default class RdataTB  {
         this.RenderToHTML()
         this.PaginateUpdate()
         this.Options = Options
+
         if (Options.RenderJSON != null) {
             this.JSONinit(Options.RenderJSON)
         }
@@ -436,21 +436,46 @@ export default class RdataTB  {
         return this.DataSorted
     }
 
+    MExcludeColumnExport():any{
+        let DataTable:Array<any> = JSON.parse(JSON.stringify(this.DataTable));
+        let exlude = this.Options.ExcludeColumnExport
+        let head = [...this.HeaderDataTable]
+
+        for(let x = 0 ; x < exlude.length ; x++){
+            let indexHead = head.indexOf(exlude[x])
+            if(indexHead > -1){
+                head.splice(indexHead,1)
+            }
+        }
+
+
+        for(let x = 0 ; x < DataTable.length ; x++){
+             for (let n = 0; n < exlude.length; n++) {
+                 delete DataTable[x][exlude[n]]
+             }
+        }
+        return {
+            "header" : head,
+            "data":DataTable
+        }
+    }
+
     /**
      * 
      * @param filename filename to download default is Export
      * 
      */
     DownloadCSV(filename:string = 'Export'):void{
+        let data = this.MExcludeColumnExport();
         let str = '';
-        let hed = this.HeaderDataTable.toString();
+        let hed = data.header.toString();
         str = hed + '\r\n';
 
-        for (let i = 0; i < this.DataTable.length; i++) {
+        for (let i = 0; i < data.data.length; i++) {
             let line = '';
-            for (const index in this.DataTable[i]) {
+            for (const index in data.data[i]) {
                 if (line != '') line += ','
-                line += this.DataTable[i][index];
+                line += data.data[i][index];
             }
             str += line + '\r\n';
         }
@@ -468,8 +493,10 @@ export default class RdataTB  {
      * 
      */
     DownloadJSON(filename:string = 'Export'):void{
+        let data = this.MExcludeColumnExport();
+
         const element = document.createElement('a')!;
-        element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.DataTable));
+        element.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data.data));
         element.target = '_blank';
         element.download = filename + '.json';
         element.click();
@@ -481,6 +508,7 @@ export default class RdataTB  {
      * 
      */
     public highlight(text:string):void{
+
         if (this.ShowHighlight) {
             const getbody:any = this.TableElement?.getElementsByTagName('tbody');
             for (let row = 0; row < getbody[0].rows.length; row++) {
@@ -494,7 +522,7 @@ export default class RdataTB  {
                      }
                    }
                 }
-        }
+            }
     }
 
     /**
