@@ -740,10 +740,17 @@
 	window.parent.document.body.style.zoom = 0.8; // zoom
 
 	let x = new RdataTB('myTable',{
+		//RenderJSON:[], // Convert Json to Table html 
+		ShowSearch:true, // show search field,
+		ShowSelect:true, // show show select,
+		ShowPaginate:true, // show paginate ,
+		SelectionNumber:[5,10,20,50,100], //Change Option in Select
 		HideColumn:["City"], // Hide column
-		fixedTable:true, // fixed table,
-		sortAnimate:false, // show animated if sorted
-		ExcludeColumnExport:['Name','Ext']
+		ShowHighlight:true, // show Highlight if search
+	    fixedTable:true, // fixed table
+        sortAnimate:false, // show animated if sorted
+		ShowTfoot:false,
+		ExcludeColumnExport:["Name","City"] 
 	});
 
 </script>

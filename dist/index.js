@@ -1,4 +1,12 @@
 "use strict";
+/**
+ *
+ *
+ * By Rakhmadi (c) 2021
+ * Under the MIT License.
+ *
+ *
+ */
 class RdataTB {
     constructor(IdTable, Options = { RenderJSON: null,
         ShowSearch: true,
@@ -9,8 +17,9 @@ class RdataTB {
         ShowHighlight: false,
         fixedTable: false,
         sortAnimate: true,
+        ShowTfoot: true,
         ExcludeColumnExport: [] }) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d;
         this.HeaderDataTable = []; // header table to array
         this.RowDataTable = []; // get Table to json
         this.DataTable = [];
@@ -31,6 +40,7 @@ class RdataTB {
         this.PageNow = 1;
         this.ExcludeColumnExport = [];
         this.TableElement = document.getElementById(IdTable);
+        this.Options = Options;
         this.detectTyped();
         this.StyleS();
         this.ConvertToJson();
@@ -39,41 +49,27 @@ class RdataTB {
         this.search();
         this.RenderToHTML();
         this.PaginateUpdate();
-        this.Options = Options;
-        if (Options.RenderJSON != null) {
+        if (Options.RenderJSON != null && Options.hasOwnProperty('RenderJSON')) {
             this.JSONinit(Options.RenderJSON);
         }
-        if (Options.ShowSelect != true) {
-            if (Options.ShowSelect != null || Options.ShowSelect === false) {
-                (_a = document.getElementById('my-select')) === null || _a === void 0 ? void 0 : _a.remove();
-            }
+        if (!Options.ShowSelect && Options.hasOwnProperty('ShowSelect')) {
+            (_a = document.getElementById('my-select')) === null || _a === void 0 ? void 0 : _a.remove();
         }
-        if (Options.ShowHighlight != false) {
-            if (Options.ShowHighlight != null || Options.ShowHighlight === true) {
-                this.ShowHighlight = true;
-            }
-        }
-        if (Options.fixedTable != false) {
-            if (Options.fixedTable != null || Options.fixedTable === true) {
-                (_b = this.TableElement) === null || _b === void 0 ? void 0 : _b.classList.add("table_layout_fixed");
-            }
-            else {
-                (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.classList.remove("table_layout_fixed");
-            }
+        this.ShowHighlight = Options === null || Options === void 0 ? void 0 : Options.ShowHighlight;
+        if (Options.fixedTable && Options.hasOwnProperty('fixedTable')) {
+            (_b = this.TableElement) === null || _b === void 0 ? void 0 : _b.classList.add("table_layout_fixed");
         }
         else {
-            (_d = this.TableElement) === null || _d === void 0 ? void 0 : _d.classList.add("table_layout_fixed");
+            (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.classList.remove("table_layout_fixed");
         }
-        if (Options.ShowSearch != true) {
-            if (Options.ShowSearch != null || Options.ShowSearch === false) {
-                (_e = document.getElementById('SearchControl')) === null || _e === void 0 ? void 0 : _e.remove();
-            }
+        if (!Options.ShowSearch && Options.hasOwnProperty('ShowSearch')) {
+            (_d = document.getElementById('SearchControl')) === null || _d === void 0 ? void 0 : _d.remove();
         }
-        if (Options.HideColumn != null) {
+        if (Options.HideColumn != null && Options.hasOwnProperty('HideColumn')) {
             this.ListHiding = Options.HideColumn;
             this.DoHide();
         }
-        if (Options.SelectionNumber != null) {
+        if (Options.SelectionNumber != null && Options.hasOwnProperty('SelectionNumber')) {
             this.SelectionNumber = Options.SelectionNumber;
             this.ChangeSelect();
         }
@@ -138,7 +134,10 @@ class RdataTB {
         for (let x = 0; x < this.SelectionNumber.length; x++) {
             this.SelectElementString += `<option value="${this.SelectionNumber[x]}">${this.SelectionNumber[x]}</option>`;
         }
-        document.getElementById("my-select").innerHTML = this.SelectElementString;
+        let ElSelect = document.getElementById("my-select");
+        if (ElSelect) {
+            ElSelect.innerHTML = this.SelectElementString;
+        }
         return this.SelectElementString;
     }
     Control() {
@@ -299,21 +298,25 @@ class RdataTB {
             this.DataToRender = SlecTloaf;
         }
         // ====
-        const ToEl = `<thead><tr>${header}</tr></thead><tbody>${row}</tbody><tfoot>${footer}</tfoot>`;
+        let ToEl = `<thead><tr>${header}</tr></thead><tbody>${row}</tbody>`;
+        if (this.Options.ShowTfoot) {
+            ToEl += `<tfoot>${footer}</tfoot>`;
+        }
         this.TableElement.innerHTML = ToEl;
         for (let n = 0; n < this.HeaderDataTable.length; n++) {
             const cv = document.getElementById(`${this.HeaderDataTable[n]}_header`);
             document.getElementById(`${this.HeaderDataTable[n]}_header`).style.opacity = '100%';
             cv.onclick = () => {
                 this.sort(this.HeaderDataTable[n]);
+                let GetElsHeaderList = document.getElementById(`${this.HeaderDataTable[n]}_header`);
                 document.getElementById(`${this.HeaderDataTable[n]}_header`).style.opacity = '60%';
                 if (this.Assc) {
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.remove('tablesorter-header-asc');
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.add('tablesorter-header-desc');
+                    GetElsHeaderList.classList.remove('tablesorter-header-asc');
+                    GetElsHeaderList.classList.add('tablesorter-header-desc');
                 }
                 else {
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.remove('tablesorter-header-desc');
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.add('tablesorter-header-asc');
+                    GetElsHeaderList.classList.remove('tablesorter-header-desc');
+                    GetElsHeaderList.classList.add('tablesorter-header-asc');
                 }
                 //animate
                 if (this.Options.sortAnimate) {
@@ -484,9 +487,13 @@ class RdataTB {
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "none";
         }
-        if (document.getElementById(`${column}_header`)) {
-            document.getElementById(`${column}_header`).style.display = "none";
-            document.getElementById(`${column}_footer`).style.display = "none";
+        let ColmnHeader = document.getElementById(`${column}_header`);
+        let ColmnFotter = document.getElementById(`${column}_footer`);
+        if (ColmnHeader) {
+            ColmnHeader.style.display = "none";
+            if (ColmnFotter) {
+                ColmnFotter.style.display = "none";
+            }
         }
     }
     ShowCol(column) {
@@ -494,9 +501,13 @@ class RdataTB {
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "";
         }
-        if (document.getElementById(`${column}_header`)) {
-            document.getElementById(`${column}_header`).style.display = "";
-            document.getElementById(`${column}_footer`).style.display = "";
+        let ColmnHeader = document.getElementById(`${column}_header`);
+        let ColmnFotter = document.getElementById(`${column}_footer`);
+        if (ColmnHeader) {
+            ColmnHeader.style.display = "";
+            if (ColmnFotter) {
+                ColmnFotter.style.display = "";
+            }
         }
     }
     DoHide() {

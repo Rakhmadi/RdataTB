@@ -7,18 +7,21 @@
  * 
  * 
  */
+
+
 interface IOptions{
     RenderJSON: Array<any> | null,
     ShowSearch:boolean,
     ShowSelect:boolean,
     ShowPaginate:boolean,
+    ShowTfoot:boolean,
     SelectionNumber:Array<number>,
     HideColumn:Array<string>,
     ShowHighlight:boolean,
     fixedTable:boolean,
     sortAnimate:boolean,
     ExcludeColumnExport:Array<any>
-    
+
 }
 
 interface IListtyped{
@@ -60,8 +63,10 @@ class RdataTB  {
         ShowHighlight:false,
         fixedTable:false,
         sortAnimate:true,
+        ShowTfoot:true,
         ExcludeColumnExport:[]}) {
         this.TableElement = document.getElementById(IdTable)
+        this.Options = Options
         this.detectTyped()
         this.StyleS();
         this.ConvertToJson()
@@ -70,41 +75,35 @@ class RdataTB  {
         this.search()
         this.RenderToHTML()
         this.PaginateUpdate()
-        this.Options = Options
 
-        if (Options.RenderJSON != null) {
+
+        if (Options.RenderJSON != null && Options.hasOwnProperty('RenderJSON')) {
             this.JSONinit(Options.RenderJSON)
         }
-        if (Options.ShowSelect != true) {
-            if (Options.ShowSelect != null || Options.ShowSelect === false){
+
+        if (!Options.ShowSelect && Options.hasOwnProperty('ShowSelect')) {
                 document.getElementById('my-select')?.remove()
-            }
         }
 
-        if (Options.ShowHighlight != false) {
-            if (Options.ShowHighlight != null || Options.ShowHighlight === true){
-                this.ShowHighlight = true
-            }
-        }
-        if (Options.fixedTable != false) {
-            if (Options.fixedTable != null || Options.fixedTable === true){
-                this.TableElement?.classList.add("table_layout_fixed")
-            }else{
-                this.TableElement?.classList.remove("table_layout_fixed")
-            }
-        }else{
+            this.ShowHighlight = Options?.ShowHighlight!
+        
+
+        if (Options.fixedTable && Options.hasOwnProperty('fixedTable')){
             this.TableElement?.classList.add("table_layout_fixed")
+        }else{
+            this.TableElement?.classList.remove("table_layout_fixed")
         }
-        if (Options.ShowSearch != true) {
-            if (Options.ShowSearch != null || Options.ShowSearch === false){
+
+        
+        if (!Options.ShowSearch && Options.hasOwnProperty('ShowSearch')) {
                 document.getElementById('SearchControl')?.remove()
-            }
         }   
-        if (Options.HideColumn != null) {
+
+        if (Options.HideColumn != null && Options.hasOwnProperty('HideColumn')) {
             this.ListHiding = Options.HideColumn
             this.DoHide()
         }
-        if (Options.SelectionNumber != null) {
+        if (Options.SelectionNumber != null && Options.hasOwnProperty('SelectionNumber')) {
             this.SelectionNumber = Options.SelectionNumber
             this.ChangeSelect()
         }
@@ -169,7 +168,10 @@ class RdataTB  {
         for (let x = 0; x < this.SelectionNumber.length; x++) {
             this.SelectElementString += `<option value="${this.SelectionNumber[x]}">${this.SelectionNumber[x]}</option>`
         }
-        document.getElementById("my-select")!.innerHTML = this.SelectElementString
+        let ElSelect:HTMLElement = document.getElementById("my-select")!
+        if(ElSelect){
+            ElSelect.innerHTML = this.SelectElementString
+        }
         return this.SelectElementString;
     }
 
@@ -342,7 +344,10 @@ class RdataTB  {
         }
 
         // ====
-        const ToEl=`<thead><tr>${header}</tr></thead><tbody>${row}</tbody><tfoot>${footer}</tfoot>`
+        let ToEl=`<thead><tr>${header}</tr></thead><tbody>${row}</tbody>`
+        if(this.Options.ShowTfoot){
+            ToEl+=`<tfoot>${footer}</tfoot>`
+        }
         this.TableElement!.innerHTML = ToEl
 
         for (let n = 0; n < this.HeaderDataTable.length; n++) {
@@ -353,14 +358,15 @@ class RdataTB  {
             cv.onclick = ()=>{
 
                 this.sort(this.HeaderDataTable[n]);
+                let GetElsHeaderList:HTMLElement = document.getElementById(`${this.HeaderDataTable[n]}_header`)!
                 document.getElementById(`${this.HeaderDataTable[n]}_header`)!.style.opacity = '60%'
                 if (this.Assc) {
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.remove('tablesorter-header-asc')
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.add('tablesorter-header-desc')
+                    GetElsHeaderList!.classList.remove('tablesorter-header-asc')
+                    GetElsHeaderList!.classList.add('tablesorter-header-desc')
 
                 } else {
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.remove('tablesorter-header-desc')
-                    document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.add('tablesorter-header-asc')
+                    GetElsHeaderList!.classList.remove('tablesorter-header-desc')
+                    GetElsHeaderList!.classList.add('tablesorter-header-asc')
                 }
                 //animate
                 if (this.Options.sortAnimate) {
@@ -541,9 +547,13 @@ class RdataTB  {
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "none";
         }
-        if (document.getElementById(`${column}_header`)) {
-        document.getElementById(`${column}_header`)!.style.display = "none";
-        document.getElementById(`${column}_footer`)!.style.display = "none";
+        let ColmnHeader:HTMLElement = document.getElementById(`${column}_header`)!
+        let ColmnFotter:HTMLElement = document.getElementById(`${column}_footer`)!
+        if (ColmnHeader) {
+            ColmnHeader!.style.display = "none";
+            if(ColmnFotter){
+                ColmnFotter!.style.display = "none";
+            }
         }
     }
 
@@ -552,9 +562,13 @@ class RdataTB  {
         for (let O = 0; O < Classes.length; O++) {
             Classes[O].style.display = "";
         }
-        if (document.getElementById(`${column}_header`)) {
-            document.getElementById(`${column}_header`)!.style.display = "";
-            document.getElementById(`${column}_footer`)!.style.display = "";
+        let ColmnHeader:HTMLElement = document.getElementById(`${column}_header`)!
+        let ColmnFotter:HTMLElement = document.getElementById(`${column}_footer`)!
+        if (ColmnHeader) {
+            ColmnHeader!.style.display = "";
+            if(ColmnFotter){
+                ColmnFotter!.style.display = "";
+            }
         }        
     }
 
