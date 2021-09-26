@@ -23,6 +23,7 @@ You can enter options in the second parameter
 		ShowHighlight:false, // show Highlight if search
 	        fixedTable:true, // fixed table
                 sortAnimate:true, // show animated if sorted
+					ShowTfoot:false,
 		ExcludeColumnExport:[] 
 	});
 </script>
