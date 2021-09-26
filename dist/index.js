@@ -10,7 +10,7 @@ class RdataTB {
         fixedTable: false,
         sortAnimate: true,
         ExcludeColumnExport: [] }) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e;
         this.HeaderDataTable = []; // header table to array
         this.RowDataTable = []; // get Table to json
         this.DataTable = [];
@@ -48,11 +48,6 @@ class RdataTB {
                 (_a = document.getElementById('my-select')) === null || _a === void 0 ? void 0 : _a.remove();
             }
         }
-        if (Options.ShowSelect != true) {
-            if (Options.ShowSelect != null || Options.ShowSelect === false) {
-                (_b = document.getElementById('my-select')) === null || _b === void 0 ? void 0 : _b.remove();
-            }
-        }
         if (Options.ShowHighlight != false) {
             if (Options.ShowHighlight != null || Options.ShowHighlight === true) {
                 this.ShowHighlight = true;
@@ -60,18 +55,18 @@ class RdataTB {
         }
         if (Options.fixedTable != false) {
             if (Options.fixedTable != null || Options.fixedTable === true) {
-                (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.classList.add("table_layout_fixed");
+                (_b = this.TableElement) === null || _b === void 0 ? void 0 : _b.classList.add("table_layout_fixed");
             }
             else {
-                (_d = this.TableElement) === null || _d === void 0 ? void 0 : _d.classList.remove("table_layout_fixed");
+                (_c = this.TableElement) === null || _c === void 0 ? void 0 : _c.classList.remove("table_layout_fixed");
             }
         }
         else {
-            (_e = this.TableElement) === null || _e === void 0 ? void 0 : _e.classList.add("table_layout_fixed");
+            (_d = this.TableElement) === null || _d === void 0 ? void 0 : _d.classList.add("table_layout_fixed");
         }
         if (Options.ShowSearch != true) {
             if (Options.ShowSearch != null || Options.ShowSearch === false) {
-                (_f = document.getElementById('SearchControl')) === null || _f === void 0 ? void 0 : _f.remove();
+                (_e = document.getElementById('SearchControl')) === null || _e === void 0 ? void 0 : _e.remove();
             }
         }
         if (Options.HideColumn != null) {
@@ -321,7 +316,7 @@ class RdataTB {
                     document.getElementById(`${this.HeaderDataTable[n]}_header`).classList.add('tablesorter-header-asc');
                 }
                 //animate
-                if (this.Options.sortAnimate || !undefined) {
+                if (this.Options.sortAnimate) {
                     const s = document.getElementsByClassName(`${this.HeaderDataTable[n]}__row`);
                     for (let NN = 0; NN < s.length; NN++) {
                         setTimeout(() => s[NN].classList.add('blink_me'), 21 * NN);

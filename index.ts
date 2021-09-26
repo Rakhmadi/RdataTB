@@ -80,11 +80,7 @@ class RdataTB  {
                 document.getElementById('my-select')?.remove()
             }
         }
-        if (Options.ShowSelect != true) {
-            if (Options.ShowSelect != null || Options.ShowSelect === false){
-                document.getElementById('my-select')?.remove()
-            }
-        }
+
         if (Options.ShowHighlight != false) {
             if (Options.ShowHighlight != null || Options.ShowHighlight === true){
                 this.ShowHighlight = true
@@ -367,7 +363,7 @@ class RdataTB  {
                     document.getElementById(`${this.HeaderDataTable[n]}_header`)!.classList.add('tablesorter-header-asc')
                 }
                 //animate
-                if (this.Options.sortAnimate || !undefined) {
+                if (this.Options.sortAnimate) {
                     const s:any = document.getElementsByClassName(`${this.HeaderDataTable[n]}__row`)
                     for (let NN = 0; NN < s.length; NN++) {
                         setTimeout(()=>s[NN].classList.add('blink_me'),21*NN)            
