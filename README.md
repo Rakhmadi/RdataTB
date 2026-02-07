@@ -2,8 +2,9 @@
 simple vanilla javascript datatable for Boostrap V5
 #### Setup
 > !!!! Note = Min Bostrap Version is V5.0.1
-> Demo  https://stoic-villani-c9b3f6.netlify.app/
-> 
+
+### Demo  https://stoic-villani-c9b3f6.netlify.app/
+
 ```html
 <script src="https://cdn.jsdelivr.net/gh/Rakhmadi/RdataTB@master/dist/index.js"></script>
 
