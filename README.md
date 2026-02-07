@@ -44,8 +44,8 @@ simple vanilla javascript datatable for Boostrap V5
 		SelectionNumber:[5,10,20,50], //Change Option in Select
 		HideColumn:[], // Hide column
 		ShowHighlight:false, // show Highlight if search
-	        fixedTable:true, // fixed table
-                sortAnimate:true, // show animated if sorted
+        fixedTable:true, // fixed table
+        sortAnimate:true, // show animated if sorted
 		ShowTfoot:false,
 		ExcludeColumnExport:[] 
 	});
@@ -66,8 +66,8 @@ You can enter options in the second parameter
 		SelectionNumber:[5,10,20,50], //Change Option in Select
 		HideColumn:[], // Hide column
 		ShowHighlight:false, // show Highlight if search
-	        fixedTable:true, // fixed table
-                sortAnimate:true, // show animated if sorted
+        fixedTable:true, // fixed table
+        sortAnimate:true, // show animated if sorted
 		ShowTfoot:false,
 		ExcludeColumnExport:[] 
 	});
@@ -99,16 +99,16 @@ You can enter options in the second parameter
 | Property | Descriptions |
 |--|--|
 | ```DataTableRaw``` | Get table data in json format |
-|``` HeaderDataTable ```|Get all column name|
-|``` RowDataTable```|Get data in row table|
-|``` DataToRender```|Get the data displayed in the table|
+|```HeaderDataTable ```|Get all column name|
+|```RowDataTable```|Get data in row table|
+|```DataToRender```|Get the data displayed in the table|
 
 #### Methods 
 |Name Methods  | Descriptions|
 |--|--|
-| ``` DownloadCSV('FileName'); ``` | Download table in csv format "default filename is Export" |
-|``` DownloadJSON('FileName');```|Download table in Json format "default filename is Export"|
-|``` sort('columnName'); ```|Sort table by column asc and desc|
+| ```DownloadCSV('FileName'); ``` | Download table in csv format "default filename is Export" |
+|```DownloadJSON('FileName');```|Download table in Json format "default filename is Export"|
+|```sort('columnName'); ```|Sort table by column asc and desc|
 |```nextItem();```|Get next page data|
-|``` prevItem();```|Get previous page data|
+|```prevItem();```|Get previous page data|
 
